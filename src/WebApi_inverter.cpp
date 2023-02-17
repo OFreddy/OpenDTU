@@ -59,7 +59,7 @@ void WebApiInverterClass::onInverterList(AsyncWebServerRequest* request)
                 max_channels = INV_MAX_CHAN_COUNT;
             } else {
                 obj[F("type")] = inv->typeName();
-                max_channels = inv->Statistics()->getChannelCount();
+                max_channels = inv->Statistics()->getChannelsByType(TYPE_DC).size();
             }
 
             JsonArray channel = obj.createNestedArray("channel");
@@ -67,6 +67,7 @@ void WebApiInverterClass::onInverterList(AsyncWebServerRequest* request)
                 JsonObject chanData = channel.createNestedObject();
                 chanData["name"] = config.Inverter[i].channel[c].Name;
                 chanData["max_power"] = config.Inverter[i].channel[c].MaxChannelPower;
+                chanData["yield_total_offset"] = config.Inverter[i].channel[c].YieldTotalOffset;
             }
         }
     }
@@ -167,7 +168,7 @@ void WebApiInverterClass::onInverterAdd(AsyncWebServerRequest* request)
 
     if (inv != nullptr) {
         for (uint8_t c = 0; c < INV_MAX_CHAN_COUNT; c++) {
-            inv->Statistics()->setChannelMaxPower(c, inverter->channel[c].MaxChannelPower);
+            inv->Statistics()->setStringMaxPower(c, inverter->channel[c].MaxChannelPower);
         }
     }
 
@@ -267,6 +268,7 @@ void WebApiInverterClass::onInverterEdit(AsyncWebServerRequest* request)
     uint8_t arrayCount = 0;
     for (JsonVariant channel : channelArray) {
         inverter.channel[arrayCount].MaxChannelPower = channel[F("max_power")].as<uint16_t>();
+        inverter.channel[arrayCount].YieldTotalOffset = channel[F("yield_total_offset")].as<float>();
         strncpy(inverter.channel[arrayCount].Name, channel[F("name")] | "", sizeof(inverter.channel[arrayCount].Name));
         arrayCount++;
     }
@@ -296,7 +298,8 @@ void WebApiInverterClass::onInverterEdit(AsyncWebServerRequest* request)
 
     if (inv != nullptr) {
         for (uint8_t c = 0; c < INV_MAX_CHAN_COUNT; c++) {
-            inv->Statistics()->setChannelMaxPower(c, inverter.channel[c].MaxChannelPower);
+            inv->Statistics()->setStringMaxPower(c, inverter.channel[c].MaxChannelPower);
+            inv->Statistics()->setChannelFieldOffset(TYPE_DC, static_cast<ChannelNum_t>(c), FLD_YT, inverter.channel[c].YieldTotalOffset);
         }
     }
 
