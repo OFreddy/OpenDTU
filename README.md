@@ -14,9 +14,9 @@ I added a few functions to my fork that made sense to me.
 Use calculation of sunrise / sunset to stop the polling of the inverter at night times.
 Also allows specification of a offset (in minutes).
 
-![Sunrise Sunset Configuration](docs\screenshots\92_SunriseSunset.png)
+![Sunrise Sunset Configuration](docs/screenshots/92_SunriseSunset.png)
 
-![Sunrise Sunset Info](docs\screenshots\93_SunriseSunsetInfo.png)
+![Sunrise Sunset Info](docs/screenshots/93_SunriseSunsetInfo.png)
 
 
 ### Add inverter power and yield to total in live view
@@ -27,7 +27,7 @@ Since the OpenDTU works with several inverters in my case, I didn't want some of
 
 I have added a settings option to control the calculation.
 
-![Inverter setting](docs\screenshots\91_InverterAddTotal.png)
+![Inverter setting](docs/screenshots/91_InverterAddTotal.png)
 
 ## Background
 This project was started from [this](https://www.mikrocontroller.net/topic/525778) discussion (Mikrocontroller.net).
