@@ -43,6 +43,7 @@ struct INVERTER_CONFIG_T {
     uint64_t Serial;
     char Name[INV_MAX_NAME_STRLEN + 1];
     CHANNEL_CONFIG_T channel[INV_MAX_CHAN_COUNT];
+    bool AddToTotal;
 };
 
 struct CONFIG_T {

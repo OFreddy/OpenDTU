@@ -416,6 +416,8 @@
         "InverterSerial": "Wechselrichter Seriennummer:",
         "InverterName": "Wechselrichter Name:",
         "InverterNameHint": "Hier kann ein eigener Namen für den Wechselrichter angeben werden.",
+        "AddToTotal": "Leistung und Ertrag auf die Gesamtsummen addieren",
+        "AddToTotalHint": "Wenn diese Option aktiviert ist wird die Leistung und der Ertrag dieses Wechelrichters bei den Summen in der Live Ansicht berückstichtigt.",
         "StringName": "Name String {num}:",
         "StringNameHint": "Hier kann ein eigener Name für den entsprechenden Port des Wechselrichters angegeben werden.",
         "StringMaxPower": "Max. Leistung String {num}:",

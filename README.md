@@ -1,7 +1,33 @@
-# OpenDTU
+# My Fork of OpenDTU
 
 [![OpenDTU Build](https://github.com/tbnobody/OpenDTU/actions/workflows/build.yml/badge.svg)](https://github.com/tbnobody/OpenDTU/actions/workflows/build.yml)
 [![cpplint](https://github.com/tbnobody/OpenDTU/actions/workflows/cpplint.yml/badge.svg)](https://github.com/tbnobody/OpenDTU/actions/workflows/cpplint.yml)
+
+## Fork Description
+
+First of all, I would like to thank you for the great work and the associated effort on this project. The implementation and the forward-looking architecture is exemplary. Great work.
+
+I added a few functions to my fork that made sense to me.
+
+### Stop polling at night
+
+Use calculation of sunrise / sunset to stop the polling of the inverter at night times.
+Also allows specification of a offset (in minutes).
+
+![Sunrise Sunset Configuration](docs\screenshots\92_SunriseSunset.png)
+
+![Sunrise Sunset Info](docs\screenshots\93_SunriseSunsetInfo.png)
+
+
+### Add inverter power and yield to total in live view
+
+Since the OpenDTU works with several inverters in my case, I didn't want some of them to be taken into account in the total calculation of the live view. 
+* Inverters that I have installed at a neighbor's and whose function I only want to monitor
+* Inverters powered by a battery
+
+I have added a settings option to control the calculation.
+
+![Inverter setting](docs\screenshots\91_InverterAddTotal.png)
 
 ## Background
 This project was started from [this](https://www.mikrocontroller.net/topic/525778) discussion (Mikrocontroller.net).

@@ -110,12 +110,12 @@ void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
             invObject[F("limit_absolute")] = -1;
         }
 
+        INVERTER_CONFIG_T* inv_cfg = Configuration.getInverterConfig(inv->serial());
         // Loop all channels
         for (auto& t : inv->Statistics()->getChannelTypes()) {
             JsonObject chanTypeObj = invObject.createNestedObject(inv->Statistics()->getChannelTypeName(t));
             for (auto& c : inv->Statistics()->getChannelsByType(t)) {
                 if (t == TYPE_DC) {
-                    INVERTER_CONFIG_T* inv_cfg = Configuration.getInverterConfig(inv->serial());
                     if (inv_cfg != nullptr) {
                         chanTypeObj[String(static_cast<uint8_t>(c))][F("name")]["u"] = inv_cfg->channel[c].Name;
                     }
@@ -154,9 +154,11 @@ void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
         }
 
         for (auto& c : inv->Statistics()->getChannelsByType(TYPE_AC)) {
-            totalPower += inv->Statistics()->getChannelFieldValue(TYPE_AC, c, FLD_PAC);
-            totalYieldDay += inv->Statistics()->getChannelFieldValue(TYPE_AC, c, FLD_YD);
-            totalYieldTotal += inv->Statistics()->getChannelFieldValue(TYPE_AC, c, FLD_YT);
+            if (inv_cfg->AddToTotal) {
+                totalPower += inv->Statistics()->getChannelFieldValue(TYPE_AC, c, FLD_PAC);
+                totalYieldDay += inv->Statistics()->getChannelFieldValue(TYPE_AC, c, FLD_YD);
+                totalYieldTotal += inv->Statistics()->getChannelFieldValue(TYPE_AC, c, FLD_YT);
+            }
         }
     }
 

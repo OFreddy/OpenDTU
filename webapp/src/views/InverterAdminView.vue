@@ -74,8 +74,13 @@
                             </label>
                             <input v-model="selectedInverterData.name" type="text" id="inverter-name"
                                 class="form-control" maxlength="31" />
+                            <label for="inverter-total" class="col-form-label">{{ $t('inverteradmin.AddToTotal') }}
+                                <BIconInfoCircle v-tooltip :title="$t('inverteradmin.AddToTotalHint')" />
+                            </label>
+                            <input :label="$t('inverteradmin.AddToTotal')" id="inverter-total"
+                                v-model="selectedInverterData.total"
+                                type="checkbox" />
                         </div>
-
                         <div v-for="(max, index) in selectedInverterData.channel" :key="`${index}`">
                             <div class="row g-2">
                                 <div class="col-md">
@@ -127,7 +132,6 @@
                         <div :id="`inverter-customizer`" class="form-text" v-html="$t('inverteradmin.InverterHint')">
                         </div>
                     </form>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="onCloseModal(modal)"
@@ -189,6 +193,7 @@ declare interface Inverter {
     name: string;
     type: string;
     channel: Array<Channel>;
+    total: boolean;
 }
 
 declare interface AlertResponse {

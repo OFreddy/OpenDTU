@@ -400,6 +400,8 @@
         "InverterSerial": "Numéro de série de l'onduleur",
         "InverterName": "Nom de l'onduleur :",
         "InverterNameHint": "Ici, vous pouvez spécifier un nom personnalisé pour votre onduleur.",
+        "AddToTotal": "Add power and yield to the total",
+        "AddToTotalHint": "If this option is activated, the power and the yield of this inverter are taken into account in the totals in the live view.",
         "StringName": "Nom de la ligne {num}:",
         "StringNameHint": "Ici, vous pouvez spécifier un nom personnalisé pour le port respectif de votre onduleur.",
         "StringMaxPower": "Puissance maximale de la ligne {num}:",

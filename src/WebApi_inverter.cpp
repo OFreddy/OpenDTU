@@ -51,6 +51,7 @@ void WebApiInverterClass::onInverterList(AsyncWebServerRequest* request)
                 ((uint32_t)((config.Inverter[i].Serial >> 32) & 0xFFFFFFFF)),
                 ((uint32_t)(config.Inverter[i].Serial & 0xFFFFFFFF)));
             obj[F("serial")] = buffer;
+            obj[F("total")] = config.Inverter[i].AddToTotal;
 
             auto inv = Hoymiles.getInverterBySerial(config.Inverter[i].Serial);
             uint8_t max_channels;
@@ -156,6 +157,8 @@ void WebApiInverterClass::onInverterAdd(AsyncWebServerRequest* request)
 
     strncpy(inverter->Name, root[F("name")].as<String>().c_str(), INV_MAX_NAME_STRLEN);
     Configuration.write();
+
+    inverter->AddToTotal = root.containsKey("total") ? root[F("total")].as<bool>() : true;
 
     retMsg[F("type")] = F("success");
     retMsg[F("message")] = F("Inverter created!");
@@ -264,6 +267,8 @@ void WebApiInverterClass::onInverterEdit(AsyncWebServerRequest* request)
     // Interpret the string as a hex value and convert it to uint64_t
     inverter.Serial = new_serial;
     strncpy(inverter.Name, root[F("name")].as<String>().c_str(), INV_MAX_NAME_STRLEN);
+
+    inverter.AddToTotal = root.containsKey("total") ? root[F("total")].as<bool>() : true;
 
     uint8_t arrayCount = 0;
     for (JsonVariant channel : channelArray) {
