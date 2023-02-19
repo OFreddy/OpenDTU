@@ -17,7 +17,7 @@
                     </tr>
                     <tr>
                         <th>{{ $t('firmwareinfo.FirmwareVersion') }}</th>
-                        <td><a :href="'https://github.com/tbnobody/OpenDTU/commits/' + systemStatus.git_hash?.substring(1)"
+                        <td><a :href="'https://github.com/Ofreddy/OpenDTU/commits/' + systemStatus.git_hash?.substring(1)"
                                 target="_blank" v-tooltip :title="$t('firmwareinfo.FirmwareVersionHint')">
                                 {{ systemStatus.git_hash?.substring(1) }}
                             </a></td>
