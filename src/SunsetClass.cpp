@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <time.h>
 
-extern long timezone;
-
 SunsetClass::SunsetClass()
 {
     _initialized = false;
@@ -45,8 +43,8 @@ void SunsetClass::loop()
 
         // If you have daylight savings time, make sure you set the timezone appropriately as well
         _sunSet.setTZOffset(_timezoneOffset + (timeinfo.tm_isdst != 0 ? 1 : 0));
-        _sunriseMinutes = (int)_sunSet.calcSunrise();
-        _sunsetMinutes = (int)_sunSet.calcSunset();
+        _sunriseMinutes = static_cast<int>(_sunSet.calcSunrise());
+        _sunsetMinutes = static_cast<int>(_sunSet.calcSunset());
     }
 
     if (_currentMinute != timeinfo.tm_min) {
@@ -77,7 +75,7 @@ void SunsetClass::setLocation()
     time_t tzlag = mktime(&dt);
     _timezoneOffset = -tzlag / 3600;
 
-    _sunSet.setPosition(_latitude, _longitude, (double)_timezoneOffset);
+    _sunSet.setPosition(_latitude, _longitude, static_cast<double>(_timezoneOffset));
 
     _initialized = true;
 }
