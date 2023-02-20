@@ -172,17 +172,19 @@ void loop()
 {
     NetworkSettings.loop();
     yield();
-    Hoymiles.loop(!Configuration.get().Sunset_Enabled || SunsetClassInst.isDayTime());
-    yield();
-    SunsetClassInst.loop();
-    yield();
-    MqttHandleDtu.loop();
-    yield();
-    MqttHandleInverter.loop();
-    yield();
-    MqttHandleHass.loop();
-    yield();
-    WebApi.loop();
+    if (SunsetClassInst.loop()) {
+        // Only executed if time is valid
+        yield();
+        Hoymiles.loop(!Configuration.get().Sunset_Enabled || SunsetClassInst.isDayTime());
+        yield();
+        MqttHandleDtu.loop();
+        yield();
+        MqttHandleInverter.loop();
+        yield();
+        MqttHandleHass.loop();
+        yield();
+        WebApi.loop();
+    }
     yield();
     Display.loop();
     yield();

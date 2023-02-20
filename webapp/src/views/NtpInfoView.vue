@@ -59,6 +59,16 @@
                             </td>
                         </tr>
                         <tr>
+                            <th>Deepsleep</th>
+                            <td class="badge" :class="{
+                                'text-bg-danger': !ntpDataList.deepsleep,
+                                'text-bg-success': ntpDataList.deepsleep,
+                            }">
+                                <span v-if="ntpDataList.deepsleep">{{ $t('ntpinfo.Enabled') }}</span>
+                                <span v-else>{{ $t('ntpinfo.Disabled') }}</span>
+                            </td>
+                        </tr>
+                        <tr>
                             <th>{{ $t('ntpinfo.TimezoneOffset') }}</th>
                             <td>{{ ntpDataList.timezone_offset }}</td>
                         </tr>

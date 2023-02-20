@@ -47,6 +47,8 @@ bool ConfigurationClass::write()
 
     JsonObject sunset = doc.createNestedObject("sunset");
     sunset["enabled"] = config.Sunset_Enabled;
+    sunset["deepsleep"] = config.Sunset_Deepsleep;
+    sunset["deepsleeptime"] = config.Sunset_Deepsleeptime;
     sunset["latitude"] = config.Sunset_Latitude;
     sunset["longitude"] = config.Sunset_Longitude;
     sunset["sunrise_offset"] = config.Sunset_Sunriseoffset;
@@ -186,6 +188,8 @@ bool ConfigurationClass::read()
 
     JsonObject sunset = doc["sunset"];
     config.Sunset_Enabled = sunset["enabled"] | SUNSET_ENABLED;
+    config.Sunset_Deepsleep = sunset["deepsleep"] | SUNSET_DEEPSLEEP;
+    config.Sunset_Deepsleeptime = sunset["deepsleeptime"] | SUNSET_DEEPSLEEPTIME;
     strlcpy(config.Sunset_Latitude, sunset["latitude"] | SUNSET_LATITUDE, sizeof(config.Sunset_Latitude));
     strlcpy(config.Sunset_Longitude, sunset["longitude"] | SUNSET_LONGITUDE, sizeof(config.Sunset_Longitude));
     config.Sunset_Sunriseoffset = sunset["sunrise_offset"] | SUNSET_SUNRISEOFFSET;

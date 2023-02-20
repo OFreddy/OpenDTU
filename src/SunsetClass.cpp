@@ -1,8 +1,14 @@
+#include "MessageOutput.h"
 #include "SunsetClass.h"
 #include "Configuration.h"
 #include "defaults.h"
 #include <cstdlib>
 #include <time.h>
+
+#define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP  5        /* Time ESP32 will go to sleep (in seconds) */
+
+static RTC_DATA_ATTR int bootCount = 0;
 
 SunsetClass::SunsetClass()
 {
@@ -13,10 +19,24 @@ void SunsetClass::init()
 {
     setLocation();
     _isDayTime = true;
+    _initialized = false;
+
+    MessageOutput.print(F("SunsetClass init. bootCount = "));
+    MessageOutput.printf("%u\n", bootCount++);
 }
 
-void SunsetClass::loop()
+bool SunsetClass::loop()
 {
+    struct tm timeinfo;
+
+    if (!getLocalTime(&timeinfo, 5)) { // Time is not valid
+        _isDayTime = true;
+        _currentDay = _currentMinute = -1;
+        _sunriseMinutes = _sunsetMinutes = 0;
+        _initialized = false;
+        return false;
+    }
+
     if (!Configuration.get().Sunset_Enabled) {
         if (_initialized) {
             _isDayTime = true;
@@ -24,17 +44,13 @@ void SunsetClass::loop()
             _sunriseMinutes = _sunsetMinutes = 0;
             _initialized = false;
         }
-        return;
+        return true;
     }
-    if(!_initialized)
+    
+    if (!_initialized)
+    {
+        MessageOutput.println(F("SunsetClass - Initializing"));
         setLocation();
-
-    struct tm timeinfo;
-    if (!getLocalTime(&timeinfo, 5)) { // Time is not valid
-        _isDayTime = true;
-        _currentDay = _currentMinute = -1;
-        _sunriseMinutes = _sunsetMinutes = 0;
-        return;
     }
 
     if (_currentDay != timeinfo.tm_mday) {
@@ -49,12 +65,22 @@ void SunsetClass::loop()
 
     if (_currentMinute != timeinfo.tm_min) {
         int minutesPastMidnight = timeinfo.tm_hour * 60 + timeinfo.tm_min;
-        
+
         _currentMinute = timeinfo.tm_min;
 
-        _isDayTime = (minutesPastMidnight >= (_sunriseMinutes + Configuration.get().Sunset_Sunriseoffset)) 
+        _isDayTime = (minutesPastMidnight >= (_sunriseMinutes + Configuration.get().Sunset_Sunriseoffset))
             && (minutesPastMidnight < (_sunsetMinutes + Configuration.get().Sunset_Sunsetoffset));
     }
+
+    if (Configuration.get().Sunset_Deepsleep) {
+        esp_sleep_enable_timer_wakeup(Configuration.get().Sunset_Deepsleeptime * uS_TO_S_FACTOR);
+        MessageOutput.println(F("SunsetClass - Going to sleep now"));
+        delay(1000);
+        MessageOutput.flush(); 
+        esp_deep_sleep_start();
+    }
+
+    return true;
 }
 
 void SunsetClass::setLocation()

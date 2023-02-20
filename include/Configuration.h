@@ -65,6 +65,8 @@ struct CONFIG_T {
     char Ntp_TimezoneDescr[NTP_MAX_TIMEZONEDESCR_STRLEN + 1];
 
     bool Sunset_Enabled;
+    bool Sunset_Deepsleep;
+    int16_t Sunset_Deepsleeptime;
     char Sunset_Latitude[SUNSET_MAX_LONGLAT_STRLEN + 1];
     char Sunset_Longitude[SUNSET_MAX_LONGLAT_STRLEN + 1];
     int16_t Sunset_Sunriseoffset;

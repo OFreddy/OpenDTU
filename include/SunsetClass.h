@@ -7,7 +7,7 @@ class SunsetClass {
 public:
     SunsetClass();
     void init();
-    void loop();
+    bool loop();
 
     void setLocation();
     int getTimezoneOffset();

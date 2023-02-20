@@ -53,6 +53,7 @@ void WebApiNtpClass::onNtpStatus(AsyncWebServerRequest* request)
     root[F("ntp_localtime")] = timeStringBuff;
 
     root[F("sunset_enabled")] = config.Sunset_Enabled;
+    root[F("deepsleep")] = config.Sunset_Deepsleep;
     root[F("timezone_offset")] = SunsetClassInst.getTimezoneOffset();
     int min = SunsetClassInst.getSunriseMinutes();
     snprintf(timeStringBuff, sizeof(timeStringBuff), "%02u:%02u %+i", min / 60, min % 60, Configuration.get().Sunset_Sunriseoffset);
@@ -80,6 +81,8 @@ void WebApiNtpClass::onNtpAdminGet(AsyncWebServerRequest* request)
     root[F("ntp_timezone")] = config.Ntp_Timezone;
     root[F("ntp_timezone_descr")] = config.Ntp_TimezoneDescr;
     root[F("sunset_enabled")] = config.Sunset_Enabled;
+    root[F("deepsleep")] = config.Sunset_Deepsleep;
+    root[F("deepsleeptime")] = config.Sunset_Deepsleeptime;
     root[F("latitude")] = config.Sunset_Latitude;
     root[F("longitude")] = config.Sunset_Longitude;
     root[F("sunrise_offset")] = config.Sunset_Sunriseoffset;
@@ -131,6 +134,8 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
     if (!(root.containsKey("ntp_server")
             && root.containsKey("ntp_timezone")
             && root.containsKey("sunset_enabled")
+            && root.containsKey("deepsleep")
+            && root.containsKey("deepsleeptime")
             && root.containsKey("latitude")
             && root.containsKey("longitude")
             && root.containsKey("sunrise_offset")
@@ -164,6 +169,13 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
         retMsg[F("message")] = F("Timezone description must between 1 and " STR(NTP_MAX_TIMEZONEDESCR_STRLEN) " characters long!");
         retMsg[F("code")] = WebApiError::NtpTimezoneDescriptionLength;
         retMsg[F("param")][F("max")] = NTP_MAX_TIMEZONEDESCR_STRLEN;
+        response->setLength();
+        request->send(response);
+        return;
+    }
+
+    if (root[F("deepsleeptime")].as<int16_t>() < 5 || root[F("deepsleeptime")].as<int16_t>() > 60) {
+        retMsg[F("message")] = F("Deepsleep time must be a number between 5 and 60 seconds!");
         response->setLength();
         request->send(response);
         return;
@@ -217,6 +229,8 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
     strlcpy(config.Ntp_TimezoneDescr, root[F("ntp_timezone_descr")].as<String>().c_str(), sizeof(config.Ntp_TimezoneDescr));
 
     config.Sunset_Enabled = root[F("sunset_enabled")].as<bool>();
+    config.Sunset_Deepsleep = root[F("deepsleep")].as<bool>();
+    config.Sunset_Deepsleeptime = root[F("deepsleeptime")].as<int16_t>();
     strlcpy(config.Sunset_Latitude, root[F("latitude")].as<String>().c_str(), sizeof(config.Sunset_Latitude));
     strlcpy(config.Sunset_Longitude, root[F("longitude")].as<String>().c_str(), sizeof(config.Sunset_Longitude));
     config.Sunset_Sunriseoffset = root[F("sunrise_offset")].as<int16_t>();
