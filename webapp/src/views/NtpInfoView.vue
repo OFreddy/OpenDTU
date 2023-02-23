@@ -27,67 +27,29 @@
                     <tbody>
                         <tr>
                             <th>{{ $t('ntpinfo.Status') }}</th>
-                            <td class="badge" :class="{
-                                'text-bg-danger': !ntpDataList.ntp_status,
-                                'text-bg-success': ntpDataList.ntp_status,
-                            }">
-                                <span v-if="ntpDataList.ntp_status">{{ $t('ntpinfo.Synced') }}</span>
-                                <span v-else>{{ $t('ntpinfo.NotSynced') }}</span>
+                            <td>
+                                <StatusBadge :status="ntpDataList.ntp_status" true_text="ntpinfo.Synced" false_text="ntpinfo.NotSynced" />
                             </td>
                         </tr>
                         <tr>
                             <th>{{ $t('ntpinfo.LocalTime') }}</th>
                             <td>{{ ntpDataList.ntp_localtime }}</td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-        </CardElement>
 
-        <CardElement :text="$t('ntpinfo.SunriseInformation')" textVariant="text-bg-primary" add-space>
-            <div class="table-responsive">
-                <table class="table table-hover table-condensed">
-                    <tbody>
                         <tr>
-                            <th>Status</th>
-                            <td class="badge" :class="{
-                                'text-bg-danger': !ntpDataList.sunset_enabled,
-                                'text-bg-success': ntpDataList.sunset_enabled,
-                            }">
-                                <span v-if="ntpDataList.sunset_enabled">{{ $t('ntpinfo.Enabled') }}</span>
-                                <span v-else>{{ $t('ntpinfo.Disabled') }}</span>
-                            </td>
+                            <th>{{ $t('ntpinfo.Sunrise') }}</th>
+                            <td>{{ ntpDataList.sun_risetime }}</td>
                         </tr>
                         <tr>
-                            <th>Deepsleep</th>
-                            <td class="badge" :class="{
-                                'text-bg-danger': !ntpDataList.deepsleep,
-                                'text-bg-success': ntpDataList.deepsleep,
-                            }">
-                                <span v-if="ntpDataList.deepsleep">{{ $t('ntpinfo.Enabled') }}</span>
-                                <span v-else>{{ $t('ntpinfo.Disabled') }}</span>
-                            </td>
+                            <th>{{ $t('ntpinfo.Sunset') }}</th>
+                            <td>{{ ntpDataList.sun_settime }}</td>
                         </tr>
                         <tr>
-                            <th>{{ $t('ntpinfo.TimezoneOffset') }}</th>
-                            <td>{{ ntpDataList.timezone_offset }}</td>
-                        </tr>
-                        <tr>
-                            <th>{{ $t('ntpinfo.SunriseTime') }}</th>
-                            <td>{{ $t('ntpinfo.Minutes', { tim: ntpDataList.sunrise_time }) }}</td>
-                        </tr>
-                        <tr>
-                            <th>{{ $t('ntpinfo.SunsetTime') }}</th>
-                            <td>{{ $t('ntpinfo.Minutes', { tim: ntpDataList.sunset_time }) }}</td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td class="badge" :class="{
-                                'text-bg-warning': !ntpDataList.sunset_isdaytime,
-                                'text-bg-success': ntpDataList.sunset_isdaytime,
-                            }">
-                                <span v-if="ntpDataList.sunset_isdaytime">{{ $t('ntpinfo.Daytime') }}</span>
-                                <span v-else>{{ $t('ntpinfo.Nighttime') }}</span>
+                            <th>{{ $t('ntpinfo.Mode') }}</th>
+                            <td>
+                                <StatusBadge :status="ntpDataList.sun_isDayPeriod"
+                                    true_text="ntpinfo.Day" true_class="text-bg-warning"
+                                    false_text="ntpinfo.Night" false_class="text-bg-dark" />
                             </td>
                         </tr>
                     </tbody>
@@ -100,6 +62,7 @@
 <script lang="ts">
 import BasePage from '@/components/BasePage.vue';
 import CardElement from '@/components/CardElement.vue';
+import StatusBadge from '@/components/StatusBadge.vue';
 import type { NtpStatus } from "@/types/NtpStatus";
 import { authHeader, handleResponse } from '@/utils/authentication';
 import { defineComponent } from 'vue';
@@ -108,6 +71,7 @@ export default defineComponent({
     components: {
         BasePage,
         CardElement,
+        StatusBadge,
     },
     data() {
         return {

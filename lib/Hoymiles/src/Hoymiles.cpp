@@ -16,14 +16,14 @@ HoymilesClass Hoymiles;
 void HoymilesClass::init(SPIClass* initialisedSpiBus, uint8_t pinCE, uint8_t pinIRQ)
 {
     _xSemaphore = xSemaphoreCreateMutex();
-    HOY_SEMAPHORE_GIVE(); // release before first use
+    HOY_SEMAPHORE_GIVE();  // release before first use
 
     _pollInterval = 0;
     _radio.reset(new HoymilesRadio());
     _radio->init(initialisedSpiBus, pinCE, pinIRQ);
 }
 
-void HoymilesClass::loop(bool operate)
+void HoymilesClass::loop()
 {
     HOY_SEMAPHORE_TAKE();
     _radio->loop();
@@ -35,44 +35,39 @@ void HoymilesClass::loop(bool operate)
             if (_radio->isIdle()) {
                 std::shared_ptr<InverterAbstract> iv = getInverterByPos(inverterPos);
                 if (iv != nullptr) {
-                    if (operate) {
-                        _messageOutput->print(F("Fetch inverter: "));
-                        _messageOutput->println(iv->serial(), HEX);
+                    _messageOutput->print(F("Fetch inverter: "));
+                    _messageOutput->println(iv->serial(), HEX);
 
-                        iv->sendStatsRequest(_radio.get());
+                    iv->sendStatsRequest(_radio.get());
 
-                        // Fetch event log
-                        bool force = iv->EventLog()->getLastAlarmRequestSuccess() == CMD_NOK;
-                        iv->sendAlarmLogRequest(_radio.get(), force);
+                    // Fetch event log
+                    bool force = iv->EventLog()->getLastAlarmRequestSuccess() == CMD_NOK;
+                    iv->sendAlarmLogRequest(_radio.get(), force);
 
-                        // Fetch limit
-                        if ((iv->SystemConfigPara()->getLastLimitRequestSuccess() == CMD_NOK)
-                            || ((millis() - iv->SystemConfigPara()->getLastUpdateRequest() > HOY_SYSTEM_CONFIG_PARA_POLL_INTERVAL)
-                                && (millis() - iv->SystemConfigPara()->getLastUpdateCommand() > HOY_SYSTEM_CONFIG_PARA_POLL_MIN_DURATION))) {
-                            _messageOutput->println("Request SystemConfigPara");
-                            iv->sendSystemConfigParaRequest(_radio.get());
-                        }
+                    // Fetch limit
+                    if ((iv->SystemConfigPara()->getLastLimitRequestSuccess() == CMD_NOK)
+                        || ((millis() - iv->SystemConfigPara()->getLastUpdateRequest() > HOY_SYSTEM_CONFIG_PARA_POLL_INTERVAL)
+                            && (millis() - iv->SystemConfigPara()->getLastUpdateCommand() > HOY_SYSTEM_CONFIG_PARA_POLL_MIN_DURATION))) {
+                        _messageOutput->println("Request SystemConfigPara");
+                        iv->sendSystemConfigParaRequest(_radio.get());
+                    }
 
-                        // Set limit if required
-                        if (iv->SystemConfigPara()->getLastLimitCommandSuccess() == CMD_NOK) {
-                            _messageOutput->println(F("Resend ActivePowerControl"));
-                            iv->resendActivePowerControlRequest(_radio.get());
-                        }
+                    // Set limit if required
+                    if (iv->SystemConfigPara()->getLastLimitCommandSuccess() == CMD_NOK) {
+                        _messageOutput->println(F("Resend ActivePowerControl"));
+                        iv->resendActivePowerControlRequest(_radio.get());
+                    }
 
-                        // Set power status if required
-                        if (iv->PowerCommand()->getLastPowerCommandSuccess() == CMD_NOK) {
-                            _messageOutput->println(F("Resend PowerCommand"));
-                            iv->resendPowerControlRequest(_radio.get());
-                        }
+                    // Set power status if required
+                    if (iv->PowerCommand()->getLastPowerCommandSuccess() == CMD_NOK) {
+                        _messageOutput->println(F("Resend PowerCommand"));
+                        iv->resendPowerControlRequest(_radio.get());
+                    }
 
-                        // Fetch dev info (but first fetch stats)
-                        if (iv->Statistics()->getLastUpdate() > 0 && (iv->DevInfo()->getLastUpdateAll() == 0 || iv->DevInfo()->getLastUpdateSimple() == 0)) {
-                            _messageOutput->println(F("Request device info"));
-                            iv->sendDevInfoRequest(_radio.get());
-                        }
-                    } else {
-                        if (iv->Statistics()->getRxFailureCount() < MAX_ONLINE_FAILURE_COUNT)
-                            iv->Statistics()->incrementRxFailureCount();
+                    // Fetch dev info (but first fetch stats)
+                    if (iv->Statistics()->getLastUpdate() > 0 && (iv->DevInfo()->getLastUpdateAll() == 0 || iv->DevInfo()->getLastUpdateSimple() == 0)) {
+                        _messageOutput->println(F("Request device info"));
+                        iv->sendDevInfoRequest(_radio.get());
                     }
                 }
                 if (++inverterPos >= getNumInverters()) {

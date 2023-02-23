@@ -14,8 +14,6 @@
 #define NTP_MAX_TIMEZONE_STRLEN 50
 #define NTP_MAX_TIMEZONEDESCR_STRLEN 50
 
-#define SUNSET_MAX_LONGLAT_STRLEN 10
-
 #define MQTT_MAX_HOSTNAME_STRLEN 128
 #define MQTT_MAX_USERNAME_STRLEN 64
 #define MQTT_MAX_PASSWORD_STRLEN 64
@@ -31,7 +29,7 @@
 
 #define DEV_MAX_MAPPING_NAME_STRLEN 63
 
-#define JSON_BUFFER_SIZE 6144
+#define JSON_BUFFER_SIZE 12288
 
 struct CHANNEL_CONFIG_T {
     uint16_t MaxChannelPower;
@@ -42,6 +40,10 @@ struct CHANNEL_CONFIG_T {
 struct INVERTER_CONFIG_T {
     uint64_t Serial;
     char Name[INV_MAX_NAME_STRLEN + 1];
+    bool Poll_Enable;
+    bool Poll_Enable_Night;
+    bool Command_Enable;
+    bool Command_Enable_Night;
     CHANNEL_CONFIG_T channel[INV_MAX_CHAN_COUNT];
     bool AddToTotal;
 };
@@ -63,14 +65,10 @@ struct CONFIG_T {
     char Ntp_Server[NTP_MAX_SERVER_STRLEN + 1];
     char Ntp_Timezone[NTP_MAX_TIMEZONE_STRLEN + 1];
     char Ntp_TimezoneDescr[NTP_MAX_TIMEZONEDESCR_STRLEN + 1];
-
-    bool Sunset_Enabled;
+    double Ntp_Longitude;
+    double Ntp_Latitude;
     bool Sunset_Deepsleep;
     int16_t Sunset_Deepsleeptime;
-    char Sunset_Latitude[SUNSET_MAX_LONGLAT_STRLEN + 1];
-    char Sunset_Longitude[SUNSET_MAX_LONGLAT_STRLEN + 1];
-    int16_t Sunset_Sunriseoffset;
-    int16_t Sunset_Sunsetoffset;
 
     bool Mqtt_Enabled;
     uint Mqtt_Port;

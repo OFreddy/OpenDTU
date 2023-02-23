@@ -4,10 +4,8 @@ export interface NtpStatus {
     ntp_timezone_descr: string;
     ntp_status: boolean;
     ntp_localtime: string;
-    sunset_enabled: boolean;
+    sun_risetime: string;
+    sun_settime: string;
+    sun_isDayPeriod: boolean;    
     deepsleep: boolean;
-    timezone_offset: string;
-    sunrise_time: string;
-    sunset_time: string;
-    sunset_isdaytime: boolean;
 }

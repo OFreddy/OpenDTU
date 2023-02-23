@@ -5,7 +5,7 @@
 #include "WebApi_ntp.h"
 #include "Configuration.h"
 #include "NtpSettings.h"
-#include "SunsetClass.h"
+#include "SunPosition.h"
 #include "WebApi.h"
 #include "WebApi_errors.h"
 #include "helper.h"
@@ -52,16 +52,16 @@ void WebApiNtpClass::onNtpStatus(AsyncWebServerRequest* request)
     strftime(timeStringBuff, sizeof(timeStringBuff), "%A, %B %d %Y %H:%M:%S", &timeinfo);
     root[F("ntp_localtime")] = timeStringBuff;
 
-    root[F("sunset_enabled")] = config.Sunset_Enabled;
+    SunPosition.sunriseTime(&timeinfo);
+    strftime(timeStringBuff, sizeof(timeStringBuff), "%A, %B %d %Y %H:%M:%S", &timeinfo);
+    root[F("sun_risetime")] = timeStringBuff;
+
+    SunPosition.sunsetTime(&timeinfo);
+    strftime(timeStringBuff, sizeof(timeStringBuff), "%A, %B %d %Y %H:%M:%S", &timeinfo);
+    root[F("sun_settime")] = timeStringBuff;
+
+    root[F("sun_isDayPeriod")] = SunPosition.isDayPeriod();
     root[F("deepsleep")] = config.Sunset_Deepsleep;
-    root[F("timezone_offset")] = SunsetClassInst.getTimezoneOffset();
-    int min = SunsetClassInst.getSunriseMinutes();
-    snprintf(timeStringBuff, sizeof(timeStringBuff), "%02u:%02u %+i", min / 60, min % 60, Configuration.get().Sunset_Sunriseoffset);
-    root[F("sunrise_time")] = timeStringBuff;
-    min = SunsetClassInst.getSunsetMinutes();
-    snprintf(timeStringBuff, sizeof(timeStringBuff), "%02u:%02u %+i", min / 60, min % 60, Configuration.get().Sunset_Sunsetoffset);
-    root[F("sunset_time")] = timeStringBuff;
-    root[F("sunset_isdaytime")] = SunsetClassInst.isDayTime();
 
     response->setLength();
     request->send(response);
@@ -80,13 +80,10 @@ void WebApiNtpClass::onNtpAdminGet(AsyncWebServerRequest* request)
     root[F("ntp_server")] = config.Ntp_Server;
     root[F("ntp_timezone")] = config.Ntp_Timezone;
     root[F("ntp_timezone_descr")] = config.Ntp_TimezoneDescr;
-    root[F("sunset_enabled")] = config.Sunset_Enabled;
+    root[F("longitude")] = config.Ntp_Longitude;
+    root[F("latitude")] = config.Ntp_Latitude;
     root[F("deepsleep")] = config.Sunset_Deepsleep;
     root[F("deepsleeptime")] = config.Sunset_Deepsleeptime;
-    root[F("latitude")] = config.Sunset_Latitude;
-    root[F("longitude")] = config.Sunset_Longitude;
-    root[F("sunrise_offset")] = config.Sunset_Sunriseoffset;
-    root[F("sunset_offset")] = config.Sunset_Sunsetoffset;
 
     response->setLength();
     request->send(response);
@@ -133,13 +130,10 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
 
     if (!(root.containsKey("ntp_server")
             && root.containsKey("ntp_timezone")
-            && root.containsKey("sunset_enabled")
-            && root.containsKey("deepsleep")
-            && root.containsKey("deepsleeptime")
-            && root.containsKey("latitude")
             && root.containsKey("longitude")
-            && root.containsKey("sunrise_offset")
-            && root.containsKey("sunset_offset"))) {
+            && root.containsKey("latitude")
+			&& root.containsKey("deepsleep")
+			&& root.containsKey("deepsleeptime"))) {
         retMsg[F("message")] = F("Values are missing!");
         retMsg[F("code")] = WebApiError::GenericValueMissing;
         response->setLength();
@@ -174,15 +168,8 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
         return;
     }
 
-    if (root[F("deepsleeptime")].as<int16_t>() < 5 || root[F("deepsleeptime")].as<int16_t>() > 60) {
-        retMsg[F("message")] = F("Deepsleep time must be a number between 5 and 60 seconds!");
-        response->setLength();
-        request->send(response);
-        return;
-    }
-
-    if (root[F("latitude")].as<String>().length() == 0 || root[F("latitude")].as<String>().length() > SUNSET_MAX_LONGLAT_STRLEN) {
-        retMsg[F("message")] = F("Latitude must between 1 and " STR(SUNSET_MAX_LONGLAT_STRLEN) " characters long!");
+    if (root[F("deepsleeptime")].as<int16_t>() < 5 || root[F("deepsleeptime")].as<int16_t>() > 300) {
+        retMsg[F("message")] = F("Deepsleep time must be a number between 5 and 300 seconds!");
         response->setLength();
         request->send(response);
         return;
@@ -195,29 +182,8 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
         return;
     }
 
-    if (root[F("longitude")].as<String>().length() == 0 || root[F("longitude")].as<String>().length() > SUNSET_MAX_LONGLAT_STRLEN) {
-        retMsg[F("message")] = F("Longitude must between 1 and " STR(SUNSET_MAX_LONGLAT_STRLEN) " characters long!");
-        response->setLength();
-        request->send(response);
-        return;
-    }
-
     if (root[F("longitude")].as<double>() < -180.0 || root[F("longitude")].as<double>() > +180.0) {
         retMsg[F("message")] = F("Longitude must be a number between -180.0 and 180.0!");
-        response->setLength();
-        request->send(response);
-        return;
-    }
-
-    if (root[F("sunrise_offset")].as<int16_t>() < -60 || root[F("sunrise_offset")].as<int16_t>() > 60) {
-        retMsg[F("message")] = F("Sunrise offset must be a number between -60 and 60!");
-        response->setLength();
-        request->send(response);
-        return;
-    }
-
-    if (root[F("sunset_offset")].as<int16_t>() < -60 || root[F("sunset_offset")].as<int16_t>() > 60) {
-        retMsg[F("message")] = F("Sunset offset must be a number between -60 and 60!");
         response->setLength();
         request->send(response);
         return;
@@ -228,13 +194,10 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
     strlcpy(config.Ntp_Timezone, root[F("ntp_timezone")].as<String>().c_str(), sizeof(config.Ntp_Timezone));
     strlcpy(config.Ntp_TimezoneDescr, root[F("ntp_timezone_descr")].as<String>().c_str(), sizeof(config.Ntp_TimezoneDescr));
 
-    config.Sunset_Enabled = root[F("sunset_enabled")].as<bool>();
+    config.Ntp_Latitude = root[F("latitude")].as<double>();
+    config.Ntp_Longitude = root[F("longitude")].as<double>();
     config.Sunset_Deepsleep = root[F("deepsleep")].as<bool>();
     config.Sunset_Deepsleeptime = root[F("deepsleeptime")].as<int16_t>();
-    strlcpy(config.Sunset_Latitude, root[F("latitude")].as<String>().c_str(), sizeof(config.Sunset_Latitude));
-    strlcpy(config.Sunset_Longitude, root[F("longitude")].as<String>().c_str(), sizeof(config.Sunset_Longitude));
-    config.Sunset_Sunriseoffset = root[F("sunrise_offset")].as<int16_t>();
-    config.Sunset_Sunsetoffset = root[F("sunset_offset")].as<int16_t>();
     Configuration.write();
 
     retMsg[F("type")] = F("success");

@@ -11,6 +11,8 @@ I added a few functions to my fork that made sense to me.
 
 ### Stop polling at night
 
+**Obsolete as now implemented in upstream in a much better manner**
+
 Use calculation of sunrise / sunset to stop the polling of the inverter at night times.
 Also allows specification of a offset (in minutes).
 
