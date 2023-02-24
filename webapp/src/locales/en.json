@@ -234,6 +234,12 @@
         "Mode": "Mode",
         "Day": "Day",
         "Night": "Night"
+        "LocalTime": "Local Time",
+        "Sunrise": "Nautical Sunrise",
+        "Sunset": "Nautical Sunset",
+        "Mode": "Mode",
+        "Day": "Day",
+        "Night": "Night"
     },
     "mqttinfo": {
         "MqttInformation": "MQTT Information",

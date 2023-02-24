@@ -48,6 +48,17 @@
                                     'text-bg-dark': inverter.command_enable_night,}"
                                     ><BIconArrowUp v-if="inverter.command_enable" /></span>
                             </td>
+                            <td>
+                                <span class="badge" :title="$t('inverteradmin.Receive')" :class="{
+                                    'text-bg-warning': !inverter.poll_enable_night,
+                                    'text-bg-dark': inverter.poll_enable_night,}"
+                                    ><BIconArrowDown v-if="inverter.poll_enable"  /></span>
+
+                                <span class="badge" :title="$t('inverteradmin.Send')" :class="{
+                                    'text-bg-warning': !inverter.command_enable_night,
+                                    'text-bg-dark': inverter.command_enable_night,}"
+                                    ><BIconArrowUp v-if="inverter.command_enable" /></span>
+                            </td>
                             <td>{{ inverter.serial }}</td>
                             <td>{{ inverter.name }}</td>
                             <td>{{ inverter.type }}</td>

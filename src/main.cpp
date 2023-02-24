@@ -150,6 +150,8 @@ void loop()
     }        
     Display.loop();
     yield();
+    SunPosition.loop();
+    yield();
     MessageOutput.loop();
     yield();
 }
