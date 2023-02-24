@@ -6,7 +6,6 @@
 #include "Configuration.h"
 #include "NtpSettings.h"
 #include "SunPosition.h"
-#include "SunPosition.h"
 #include "WebApi.h"
 #include "WebApi_errors.h"
 #include "helper.h"
