@@ -103,12 +103,13 @@
                                 <div class="alert alert-secondary mt-3" role="alert" v-html="$t('inverteradmin.StatusHint')"></div>
                             </CardElement>
 
-                            <label for="inverter-total" class="col-form-label">{{ $t('inverteradmin.AddToTotal') }}
-                                <BIconInfoCircle v-tooltip :title="$t('inverteradmin.AddToTotalHint')" />
-                            </label>
-                            <input :label="$t('inverteradmin.AddToTotal')" id="inverter-total"
-                                v-model="selectedInverterData.total"
-                                type="checkbox" />
+                            <CardElement :text="$t('invertertotalinfo.TotalYieldTotal')" >
+                                <InputElement :label="$t('inverteradmin.AddToTotal')"
+                                    v-model="selectedInverterData.total"
+                                    type="checkbox" wide 
+                                    :tooltip="$t('inverteradmin.AddToTotalHint')"/>
+
+                            </CardElement>
                         </div>
 
                         <div v-for="(max, index) in selectedInverterData.channel" :key="`${index}`">
