@@ -9,6 +9,12 @@ First of all, I would like to thank you for the great work and the associated ef
 
 I added a few functions to my fork that made sense to me.
 
+### Deepsleep of ESP32 during night
+
+The ESP32 is put into deep sleep mode at night to save energy.
+
+![Deepsleep option](docs/screenshots/94_DeepSleep.png)
+
 ### Stop polling at night
 
 **Obsolete as now implemented in upstream in a much better manner**
