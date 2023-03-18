@@ -29,13 +29,13 @@
             </CardElement>
 
             <CardElement :text="$t('ntpadmin.LocationConfiguration')" textVariant="text-bg-primary" add-space>
-                <InputElement :label="$t('ntpadmin.Longitude')"
-                              v-model="ntpConfigList.longitude"
-                              type="number" min="-180" max="180" step="any"/>
-
                 <InputElement :label="$t('ntpadmin.Latitude')"
                               v-model="ntpConfigList.latitude"
                               type="number" min="-90" max="90" step="any"/>
+
+                <InputElement :label="$t('ntpadmin.Longitude')"
+                              v-model="ntpConfigList.longitude"
+                              type="number" min="-180" max="180" step="any"/>
             </CardElement>
                 <div class="row mb-3">
                     <label class="col-sm-2 form-check-label" for="inputDeepsleep">{{ $t('ntpadmin.EnableDeepsleep') }}</label>
