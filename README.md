@@ -35,7 +35,9 @@ Since the OpenDTU works with several inverters in my case, I didn't want some of
 
 I have added a settings option to control the calculation.
 
-![Inverter setting](docs/screenshots/91_InverterAddTotal.png)
+[![OpenDTU Build](https://github.com/tbnobody/OpenDTU/actions/workflows/build.yml/badge.svg)](https://github.com/tbnobody/OpenDTU/actions/workflows/build.yml)
+[![cpplint](https://github.com/tbnobody/OpenDTU/actions/workflows/cpplint.yml/badge.svg)](https://github.com/tbnobody/OpenDTU/actions/workflows/cpplint.yml)
+[![Yarn Linting](https://github.com/tbnobody/OpenDTU/actions/workflows/yarnlint.yml/badge.svg)](https://github.com/tbnobody/OpenDTU/actions/workflows/yarnlint.yml)
 
 ## !! IMPORTANT UPGRADE NOTES !!
 
