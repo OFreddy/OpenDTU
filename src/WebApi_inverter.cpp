@@ -55,7 +55,7 @@ void WebApiInverterClass::onInverterList(AsyncWebServerRequest* request)
             obj["poll_enable_night"] = config.Inverter[i].Poll_Enable_Night;
             obj["command_enable"] = config.Inverter[i].Command_Enable;
             obj["command_enable_night"] = config.Inverter[i].Command_Enable_Night;
-            obj[F("total")] = config.Inverter[i].AddToTotal;
+            obj["total"] = config.Inverter[i].AddToTotal;
 
             auto inv = Hoymiles.getInverterBySerial(config.Inverter[i].Serial);
             uint8_t max_channels;
@@ -162,7 +162,7 @@ void WebApiInverterClass::onInverterAdd(AsyncWebServerRequest* request)
     strncpy(inverter->Name, root["name"].as<String>().c_str(), INV_MAX_NAME_STRLEN);
     Configuration.write();
 
-    inverter->AddToTotal = root.containsKey("total") ? root[F("total")].as<bool>() : true;
+    inverter->AddToTotal = root.containsKey("total") ? root["total"].as<bool>() : true;
 
     retMsg["type"] = "success";
     retMsg["message"] = "Inverter created!";
@@ -272,7 +272,7 @@ void WebApiInverterClass::onInverterEdit(AsyncWebServerRequest* request)
     inverter.Serial = new_serial;
     strncpy(inverter.Name, root["name"].as<String>().c_str(), INV_MAX_NAME_STRLEN);
 
-    inverter.AddToTotal = root.containsKey("total") ? root[F("total")].as<bool>() : true;
+    inverter.AddToTotal = root.containsKey("total") ? root["total"].as<bool>() : true;
 
     uint8_t arrayCount = 0;
     for (JsonVariant channel : channelArray) {

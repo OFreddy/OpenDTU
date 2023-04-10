@@ -168,15 +168,15 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
         return;
     }
 
-    if (root[F("deepsleeptime")].as<int16_t>() < 5 || root[F("deepsleeptime")].as<int16_t>() > 300) {
-        retMsg[F("message")] = F("Deepsleep time must be a number between 5 and 300 seconds!");
+    if (root["deepsleeptime"].as<int16_t>() < 5 || root["deepsleeptime"].as<int16_t>() > 300) {
+        retMsg["message"] = "Deepsleep time must be a number between 5 and 300 seconds!";
         response->setLength();
         request->send(response);
         return;
     }
 
-    if (root[F("latitude")].as<double>() < -90.0 || root[F("latitude")].as<double>() > +90.0) {
-        retMsg[F("message")] = F("Latitude must be a number between -90.0 and 90.0!");
+    if (root["latitude"].as<double>() < -90.0 || root["latitude"].as<double>() > +90.0) {
+        retMsg["message"] = "Latitude must be a number between -90.0 and 90.0!";
         response->setLength();
         request->send(response);
         return;
@@ -196,15 +196,15 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
         return;
     }
 
-    if (root[F("latitude")].as<double>() < -90.0 || root[F("latitude")].as<double>() > +90.0) {
-        retMsg[F("message")] = F("Latitude must be a number between -90.0 and 90.0!");
+    if (root["latitude"].as<double>() < -90.0 || root["latitude"].as<double>() > +90.0) {
+        retMsg["message"] = "Latitude must be a number between -90.0 and 90.0!";
         response->setLength();
         request->send(response);
         return;
     }
 
-    if (root[F("longitude")].as<double>() < -180.0 || root[F("longitude")].as<double>() > +180.0) {
-        retMsg[F("message")] = F("Longitude must be a number between -180.0 and 180.0!");
+    if (root["longitude"].as<double>() < -180.0 || root["longitude"].as<double>() > +180.0) {
+        retMsg["message"] = "Longitude must be a number between -180.0 and 180.0!";
         response->setLength();
         request->send(response);
         return;
