@@ -141,7 +141,7 @@ void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
                 addField(chanTypeObj, i, inv, t, c, FLD_F);
                 addField(chanTypeObj, i, inv, t, c, FLD_T);
                 addField(chanTypeObj, i, inv, t, c, FLD_PF);
-                addField(chanTypeObj, i, inv, t, c, FLD_PRA);
+                addField(chanTypeObj, i, inv, t, c, FLD_Q);
                 addField(chanTypeObj, i, inv, t, c, FLD_EFF);
                 if (t == TYPE_DC && inv->Statistics()->getStringMaxPower(c) > 0) {
                     addField(chanTypeObj, i, inv, t, c, FLD_IRR);
@@ -177,7 +177,9 @@ void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
     JsonObject hintObj = root.createNestedObject("hints");
     struct tm timeinfo;
     hintObj["time_sync"] = !getLocalTime(&timeinfo, 5);
-    hintObj["radio_problem"] = (!Hoymiles.getRadio()->isConnected() || !Hoymiles.getRadio()->isPVariant());
+    hintObj["radio_problem"] =
+        (Hoymiles.getRadioNrf()->isInitialized() && (!Hoymiles.getRadioNrf()->isConnected() || !Hoymiles.getRadioNrf()->isPVariant())) ||
+        (Hoymiles.getRadioCmt()->isInitialized() && (!Hoymiles.getRadioCmt()->isConnected()));
     if (!strcmp(Configuration.get().Security_Password, ACCESS_POINT_PASSWORD)) {
         hintObj["default_password"] = true;
     } else {

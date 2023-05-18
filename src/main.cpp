@@ -10,6 +10,7 @@
 #include "MqttHandleDtu.h"
 #include "MqttHandleHass.h"
 #include "MqttHandleInverter.h"
+#include "MqttHandleInverterTotal.h"
 #include "MqttSettings.h"
 #include "NetworkSettings.h"
 #include "NtpSettings.h"
@@ -25,8 +26,13 @@ void setup()
 {
     // Initialize serial output
     Serial.begin(SERIAL_BAUDRATE);
+#if ARDUINO_USB_CDC_ON_BOOT
+    Serial.setTxTimeoutMs(0);
+    delay(100);
+#else
     while (!Serial)
         yield();
+#endif
     MessageOutput.println();
     MessageOutput.println("Starting OpenDTU");
 
@@ -92,6 +98,7 @@ void setup()
     MqttSettings.init();
     MqttHandleDtu.init();
     MqttHandleInverter.init();
+    MqttHandleInverterTotal.init();
     MqttHandleHass.init();
     MessageOutput.println("done");
 
@@ -150,6 +157,7 @@ void loop()
         yield();
         MqttHandleInverter.loop();
         yield();
+        MqttHandleInverterTotal.loop();
         MqttHandleHass.loop();
         yield();
         WebApi.loop();

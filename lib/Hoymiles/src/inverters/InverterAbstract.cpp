@@ -7,9 +7,10 @@
 #include "crc.h"
 #include <cstring>
 
-InverterAbstract::InverterAbstract(uint64_t serial)
+InverterAbstract::InverterAbstract(HoymilesRadio *radio, uint64_t serial)
 {
     _serial.u64 = serial;
+    _radio = radio;
 
     char serial_buff[sizeof(uint64_t) * 8 + 1];
     snprintf(serial_buff, sizeof(serial_buff), "%0x%08x",
@@ -30,7 +31,7 @@ void InverterAbstract::init()
     // Not possible in constructor --> virtual function
     // Not possible in verifyAllFragments --> Because no data if nothing is ever received
     // It has to be executed because otherwise the getChannelCount method in stats always returns 0
-    _statisticsParser.get()->setByteAssignment(getByteAssignment());
+    _statisticsParser.get()->setByteAssignment(getByteAssignment(), getByteAssignmentSize());
 }
 
 uint64_t InverterAbstract::serial()
@@ -93,6 +94,16 @@ void InverterAbstract::setEnableCommands(bool enabled)
 bool InverterAbstract::getEnableCommands()
 {
     return _enableCommands;
+}
+
+bool InverterAbstract::sendChangeChannelRequest()
+{
+    return false;
+}
+
+HoymilesRadio* InverterAbstract::getRadio()
+{
+    return _radio;
 }
 
 AlarmLogParser* InverterAbstract::EventLog()
@@ -170,7 +181,7 @@ uint8_t InverterAbstract::verifyAllFragments(CommandAbstract* cmd)
     // All missing
     if (_rxFragmentLastPacketId == 0) {
         Hoymiles.getMessageOutput()->println("All missing");
-        if (cmd->getSendCount() <= MAX_RESEND_COUNT) {
+        if (cmd->getSendCount() <= cmd->getMaxResendCount()) {
             return FRAGMENT_ALL_MISSING_RESEND;
         } else {
             cmd->gotTimeout(this);
@@ -181,7 +192,7 @@ uint8_t InverterAbstract::verifyAllFragments(CommandAbstract* cmd)
     // Last fragment is missing (the one with 0x80)
     if (_rxFragmentMaxPacketId == 0) {
         Hoymiles.getMessageOutput()->println("Last missing");
-        if (_rxFragmentRetransmitCnt++ < MAX_RETRANSMIT_COUNT) {
+        if (_rxFragmentRetransmitCnt++ < cmd->getMaxRetransmitCount()) {
             return _rxFragmentLastPacketId + 1;
         } else {
             cmd->gotTimeout(this);
@@ -193,7 +204,7 @@ uint8_t InverterAbstract::verifyAllFragments(CommandAbstract* cmd)
     for (uint8_t i = 0; i < _rxFragmentMaxPacketId - 1; i++) {
         if (!_rxFragmentBuffer[i].wasReceived) {
             Hoymiles.getMessageOutput()->println("Middle missing");
-            if (_rxFragmentRetransmitCnt++ < MAX_RETRANSMIT_COUNT) {
+            if (_rxFragmentRetransmitCnt++ < cmd->getMaxRetransmitCount()) {
                 return i + 1;
             } else {
                 cmd->gotTimeout(this);
