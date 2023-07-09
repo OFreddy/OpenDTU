@@ -66,7 +66,7 @@ void WebApiNtpClass::onNtpStatus(AsyncWebServerRequest* request)
     }
     root["sun_settime"] = timeStringBuff;
 
-    root["sun_isSunsetAvailable"] = SunPosition.isSunsetAvailable();
+    root["sun_isValidInfo"] = SunPosition.isValidInfo();
     root["sun_isDayPeriod"] = SunPosition.isDayPeriod();
     root["deepsleep"] = config.Sunset_Deepsleep;
 
