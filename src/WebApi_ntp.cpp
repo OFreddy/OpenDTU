@@ -52,14 +52,21 @@ void WebApiNtpClass::onNtpStatus(AsyncWebServerRequest* request)
     strftime(timeStringBuff, sizeof(timeStringBuff), "%A, %B %d %Y %H:%M:%S", &timeinfo);
     root["ntp_localtime"] = timeStringBuff;
 
-    SunPosition.sunriseTime(&timeinfo);
-    strftime(timeStringBuff, sizeof(timeStringBuff), "%A, %B %d %Y %H:%M:%S", &timeinfo);
+    if (SunPosition.sunriseTime(&timeinfo)) {
+        strftime(timeStringBuff, sizeof(timeStringBuff), "%A, %B %d %Y %H:%M:%S", &timeinfo);
+    } else {
+        snprintf(timeStringBuff, sizeof(timeStringBuff), "--");
+    }
     root["sun_risetime"] = timeStringBuff;
 
-    SunPosition.sunsetTime(&timeinfo);
-    strftime(timeStringBuff, sizeof(timeStringBuff), "%A, %B %d %Y %H:%M:%S", &timeinfo);
+    if (SunPosition.sunsetTime(&timeinfo)) {
+        strftime(timeStringBuff, sizeof(timeStringBuff), "%A, %B %d %Y %H:%M:%S", &timeinfo);
+    } else {
+        snprintf(timeStringBuff, sizeof(timeStringBuff), "--");
+    }
     root["sun_settime"] = timeStringBuff;
 
+    root["sun_isSunsetAvailable"] = SunPosition.isSunsetAvailable();
     root["sun_isDayPeriod"] = SunPosition.isDayPeriod();
     root["deepsleep"] = config.Sunset_Deepsleep;
 
@@ -82,6 +89,7 @@ void WebApiNtpClass::onNtpAdminGet(AsyncWebServerRequest* request)
     root["ntp_timezone_descr"] = config.Ntp_TimezoneDescr;
     root["longitude"] = config.Ntp_Longitude;
     root["latitude"] = config.Ntp_Latitude;
+    root["sunsettype"] = config.Ntp_SunsetType;
     root["deepsleep"] = config.Sunset_Deepsleep;
     root["deepsleeptime"] = config.Sunset_Deepsleeptime;
 
@@ -131,7 +139,7 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
     if (!(root.containsKey("ntp_server")
             && root.containsKey("ntp_timezone")
             && root.containsKey("longitude")
-            && root.containsKey("latitude")
+            && root.containsKey("latitude") && root.containsKey("sunsettype")
 			&& root.containsKey("deepsleep")
 			&& root.containsKey("deepsleeptime"))) {
         retMsg["message"] = "Values are missing!";
@@ -217,6 +225,7 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
 
     config.Ntp_Latitude = root["latitude"].as<double>();
     config.Ntp_Longitude = root["longitude"].as<double>();
+    config.Ntp_SunsetType = root["sunsettype"].as<uint8_t>();
     config.Sunset_Deepsleep = root["deepsleep"].as<bool>();
     config.Sunset_Deepsleeptime = root["deepsleeptime"].as<int16_t>();
     Configuration.write();

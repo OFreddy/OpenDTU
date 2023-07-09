@@ -4,6 +4,7 @@ export interface NtpConfig {
     ntp_timezone_descr: string;
     latitude: number;
     longitude: number;
+    sunsettype: number;
     deepsleep: boolean;
     deepsleeptime: number;
 }

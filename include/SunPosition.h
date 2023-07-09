@@ -13,6 +13,7 @@ public:
     void loop();
 
     bool isDayPeriod();
+    bool isSunsetAvailable();
     bool isValidInfo();
     bool sunsetTime(struct tm* info);
     bool sunriseTime(struct tm* info);
@@ -22,6 +23,7 @@ private:
 
     SunSet _sun;
     bool _isDayPeriod = true;
+    bool _isSunsetAvailable = true;
     uint _sunriseMinutes = 0;
     uint _sunsetMinutes = 0;
 
