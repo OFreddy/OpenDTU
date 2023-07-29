@@ -139,7 +139,8 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
     if (!(root.containsKey("ntp_server")
             && root.containsKey("ntp_timezone")
             && root.containsKey("longitude")
-            && root.containsKey("latitude") && root.containsKey("sunsettype")
+            && root.containsKey("latitude")
+            && root.containsKey("sunsettype")
 			&& root.containsKey("deepsleep")
 			&& root.containsKey("deepsleeptime"))) {
         retMsg["message"] = "Values are missing!";
