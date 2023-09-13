@@ -14,6 +14,8 @@
 #define TOPIC_SUB_POWER "power"
 #define TOPIC_SUB_RESTART "restart"
 
+#define PUBLISH_MAX_INTERVAL 60000
+
 MqttHandleInverterClass MqttHandleInverter;
 
 void MqttHandleInverterClass::init()
@@ -92,8 +94,12 @@ void MqttHandleInverterClass::loop()
             }
 
             uint32_t lastUpdate = inv->Statistics()->getLastUpdate();
-            if (lastUpdate > 0 && lastUpdate != _lastPublishStats[i]) {
+            if (lastUpdate > 0 && (lastUpdate != _lastPublishStats[i] || ((inv->getZeroValuesIfUnreachable() || inv->getZeroYieldDayOnMidnight()) && _statsTimeout.occured()))) {
                 _lastPublishStats[i] = lastUpdate;
+
+                // At first a change of the stats have to occour. Then the stats
+                // are published on every change or every 60 seconds
+                _statsTimeout.set(PUBLISH_MAX_INTERVAL);
 
                 // Loop all channels
                 for (auto& t : inv->Statistics()->getChannelTypes()) {
@@ -126,11 +132,7 @@ void MqttHandleInverterClass::publishField(std::shared_ptr<InverterAbstract> inv
         return;
     }
 
-    String value = String(
-        inv->Statistics()->getChannelFieldValue(type, channel, fieldId),
-        static_cast<unsigned int>(inv->Statistics()->getChannelFieldDigits(type, channel, fieldId)));
-
-    MqttSettings.publish(topic, value);
+    MqttSettings.publish(topic, inv->Statistics()->getChannelFieldValueString(type, channel, fieldId));
 }
 
 String MqttHandleInverterClass::getTopic(std::shared_ptr<InverterAbstract> inv, ChannelType_t type, ChannelNum_t channel, FieldId_t fieldId)

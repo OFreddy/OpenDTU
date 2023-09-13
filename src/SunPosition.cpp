@@ -6,6 +6,7 @@
 #include "Configuration.h"
 #include "MessageOutput.h"
 #include "Utils.h"
+#include <Arduino.h>
 
 #define uS_TO_S_FACTOR 1000000 /* Conversion factor for micro seconds to seconds */
 
@@ -102,7 +103,7 @@ void SunPositionClass::updateSunData()
 
     _sunriseMinutes = static_cast<int>(sunriseRaw);
     _sunsetMinutes = static_cast<int>(sunsetRaw);
-    uint minutesPastMidnight = timeinfo.tm_hour * 60 + timeinfo.tm_min;
+    uint32_t minutesPastMidnight = timeinfo.tm_hour * 60 + timeinfo.tm_min;
 
     _isDayPeriod = (minutesPastMidnight >= _sunriseMinutes) && (minutesPastMidnight < _sunsetMinutes);
     _isValidInfo = true;
