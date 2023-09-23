@@ -122,14 +122,13 @@
                                         <div class="alert alert-secondary mt-3" role="alert" v-html="$t('inverteradmin.StatusHint')"></div>
                                     </CardElement>
         
-                            <CardElement :text="$t('invertertotalinfo.TotalYieldTotal')" >
-                                <InputElement :label="$t('inverteradmin.AddToTotal')"
-                                    v-model="selectedInverterData.total"
-                                    type="checkbox" wide 
-                                    :tooltip="$t('inverteradmin.AddToTotalHint')"/>
-
-                            </CardElement>
-                        </div>
+                                    <CardElement :text="$t('invertertotalinfo.TotalYieldTotal')" >
+                                        <InputElement :label="$t('inverteradmin.AddToTotal')"
+                                        v-model="selectedInverterData.total"
+                                        type="checkbox" wide 
+                                        :tooltip="$t('inverteradmin.AddToTotalHint')"/>
+                                    </CardElement>
+                                </div>
                             </div>
 
                             <div class="tab-pane fade show" id="nav-string" role="tabpanel" aria-labelledby="nav-string-tab" tabindex="0">
