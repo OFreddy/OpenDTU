@@ -12,7 +12,7 @@
                         <BIconXCircleFill class="fs-4" v-if="!inverter.reachable" />
                         <BIconExclamationCircleFill class="fs-4" v-if="inverter.reachable && !inverter.producing" />
                         <BIconCheckCircleFill class="fs-4" v-if="inverter.reachable && inverter.producing" />
-                        {{ inverter.name }}
+                        {{ inverter.name + " - " + inverter.AC[0].Power?.v.toFixed(inverter.AC[0].Power?.d) + " " + inverter.AC[0].Power?.u }}
                     </button>
                 </div>
             </div>

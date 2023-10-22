@@ -9,6 +9,12 @@ First of all, I would like to thank you for the great work and the associated ef
 
 I added a few functions to my fork that made sense to me.
 
+### AC Power for each Inverter in Live View
+
+The currently generated power of each inverter is displayed in the inverter list.
+
+![Deepsleep option](docs/screenshots/95_IvListWithPower.png)
+
 ### Deepsleep of ESP32 during night
 
 The ESP32 is put into deep sleep mode at night to save energy.
