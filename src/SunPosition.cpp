@@ -30,9 +30,8 @@ void SunPositionClass::init()
 
 void SunPositionClass::loop()
 {
-    if (!_isValidInfo || (millis() - _lastUpdate > SUNPOS_UPDATE_INTERVAL)) {
+    if (getDoRecalc() || checkRecalcDayChanged()) {
         updateSunData();
-        _lastUpdate = millis();
     }
 
     if (Configuration.get().Sunset_Deepsleep && !_isDayPeriod && (millis() > _bootDelay)) {
@@ -47,29 +46,70 @@ void SunPositionClass::loop()
 
 bool SunPositionClass::isDayPeriod()
 {
-    return _isDayPeriod;
+    if (!_isValidInfo) {
+        return true;
+    }
+
+    struct tm timeinfo;
+    getLocalTime(&timeinfo, 5);
+    uint32_t minutesPastMidnight = timeinfo.tm_hour * 60 + timeinfo.tm_min;
+    return (minutesPastMidnight >= _sunriseMinutes) && (minutesPastMidnight < _sunsetMinutes);
 }
 
-bool SunPositionClass::isValidInfo()
+bool SunPositionClass::isSunsetAvailable()
 {
-    return _isValidInfo;
+    return _isSunsetAvailable;
+}
+
+void SunPositionClass::setDoRecalc(bool doRecalc)
+{
+    std::lock_guard<std::mutex> lock(_recalcLock);
+    _doRecalc = doRecalc;
+}
+
+bool SunPositionClass::getDoRecalc()
+{
+    std::lock_guard<std::mutex> lock(_recalcLock);
+    return _doRecalc;
+}
+
+bool SunPositionClass::checkRecalcDayChanged()
+{
+    time_t now;
+    struct tm timeinfo;
+
+    time(&now);
+    localtime_r(&now, &timeinfo); // don't use getLocalTime() as there could be a delay of 10ms
+
+    uint32_t ymd;
+    ymd = (timeinfo.tm_year << 9) | (timeinfo.tm_mon << 5) | timeinfo.tm_mday;
+
+    if (_lastSunPositionCalculatedYMD != ymd) {
+        return true;
+    }
+    return false;
 }
 
 void SunPositionClass::updateSunData()
 {
-    CONFIG_T const& config = Configuration.get();
-    int offset = Utils::getTimezoneOffset() / 3600;
-    _sun.setPosition(config.Ntp_Latitude, config.Ntp_Longitude, offset);
-
     struct tm timeinfo;
-    if (!getLocalTime(&timeinfo, 5)) {
-        _isDayPeriod = true;
+    bool gotLocalTime;
+
+    gotLocalTime = getLocalTime(&timeinfo, 5);
+    _lastSunPositionCalculatedYMD = (timeinfo.tm_year << 9) | (timeinfo.tm_mon << 5) | timeinfo.tm_mday;
+    setDoRecalc(false);
+
+    if (!gotLocalTime) {
         _sunriseMinutes = 0;
         _sunsetMinutes = 0;
         _isValidInfo = false;
         return;
     }
 
+    CONFIG_T const& config = Configuration.get();
+    int offset = Utils::getTimezoneOffset() / 3600;
+
+    _sun.setPosition(config.Ntp_Latitude, config.Ntp_Longitude, offset);
     _sun.setCurrentDate(1900 + timeinfo.tm_year, timeinfo.tm_mon + 1, timeinfo.tm_mday);
 
     double sunset_type;
@@ -95,6 +135,7 @@ void SunPositionClass::updateSunData()
     // assume it's day period
     if (std::isnan(sunriseRaw) || std::isnan(sunsetRaw)) {
         _isDayPeriod = true;
+        _isSunsetAvailable = false;
         _sunriseMinutes = 0;
         _sunsetMinutes = 0;
         _isValidInfo = false;
@@ -103,9 +144,9 @@ void SunPositionClass::updateSunData()
 
     _sunriseMinutes = static_cast<int>(sunriseRaw);
     _sunsetMinutes = static_cast<int>(sunsetRaw);
-    uint32_t minutesPastMidnight = timeinfo.tm_hour * 60 + timeinfo.tm_min;
 
     _isDayPeriod = (minutesPastMidnight >= _sunriseMinutes) && (minutesPastMidnight < _sunsetMinutes);
+    _isSunsetAvailable = true;
     _isValidInfo = true;
 }
 

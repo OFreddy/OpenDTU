@@ -240,6 +240,8 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
 
     NtpSettings.setServer();
     NtpSettings.setTimezone();
+
+    SunPosition.setDoRecalc(true);
 }
 
 void WebApiNtpClass::onNtpTimeGet(AsyncWebServerRequest* request)
