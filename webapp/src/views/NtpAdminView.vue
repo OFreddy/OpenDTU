@@ -75,7 +75,7 @@
                     </div>
                 </div>
 
-            <button type="submit" class="btn btn-primary mb-3">{{ $t('ntpadmin.Save') }}</button>
+            <FormFooter @reload="getNtpConfig"/>
         </form>
 
         <CardElement :text="$t('ntpadmin.ManualTimeSynchronization')" textVariant="text-bg-primary" add-space>
@@ -102,6 +102,7 @@ import BasePage from '@/components/BasePage.vue';
 import BootstrapAlert from "@/components/BootstrapAlert.vue";
 import CardElement from '@/components/CardElement.vue';
 import InputElement from '@/components/InputElement.vue';
+import FormFooter from '@/components/FormFooter.vue';
 import type { NtpConfig } from "@/types/NtpConfig";
 import { authHeader, handleResponse } from '@/utils/authentication';
 import { defineComponent } from 'vue';
@@ -112,6 +113,7 @@ export default defineComponent({
         BasePage,
         BootstrapAlert,
         CardElement,
+        FormFooter,
         InputElement,
         BIconInfoCircle,
     },

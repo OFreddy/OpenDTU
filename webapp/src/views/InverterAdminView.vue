@@ -199,6 +199,11 @@
                                     v-model="selectedInverterData.zero_day"
                                     type="checkbox"
                                     :tooltip="$t('inverteradmin.ZeroDayHint')" wide/>
+
+                                <InputElement :label="$t('inverteradmin.YieldDayCorrection')"
+                                    v-model="selectedInverterData.yieldday_correction"
+                                    type="checkbox"
+                                    :tooltip="$t('inverteradmin.YieldDayCorrectionHint')" wide/>
                             </div>
                         </div>
                     </form>
@@ -276,6 +281,7 @@ declare interface Inverter {
     reachable_threshold: number;
     zero_runtime: boolean;
     zero_day: boolean;
+    yieldday_correction: boolean;
     total: boolean;
     channel: Array<Channel>;
 }
