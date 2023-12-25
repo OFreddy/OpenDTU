@@ -2,6 +2,7 @@
 
 [![OpenDTU Build](https://github.com/OFreddy/OpenDTU/actions/workflows/build.yml/badge.svg)](https://github.com/OFreddy/OpenDTU/actions/workflows/build.yml)
 [![cpplint](https://github.com/OFreddy/OpenDTU/actions/workflows/cpplint.yml/badge.svg)](https://github.com/OFreddy/OpenDTU/actions/workflows/cpplint.yml)
+[![Yarn Linting](https://github.com/OFreddy/OpenDTU/actions/workflows/yarnlint.yml/badge.svg)](https://github.com/OFreddy/OpenDTU/actions/workflows/yarnlint.yml)
 
 ## Fork Description
 
