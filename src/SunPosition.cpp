@@ -40,10 +40,10 @@ void SunPositionClass::loop()
         updateSunData();
     }
 
-    if (Configuration.get().Sunset_Deepsleep && !_isDayPeriod && (millis() > _bootDelay)) {
-        esp_sleep_enable_timer_wakeup(Configuration.get().Sunset_Deepsleeptime * uS_TO_S_FACTOR);
-        MessageOutput.print(F("SunsetClass - Going to sleep now for "));
-        MessageOutput.printf("%u s\n", Configuration.get().Sunset_Deepsleeptime);
+    if (Configuration.get().Ntp.Deepsleep && !isDayPeriod() && (millis() > _bootDelay)) {
+        esp_sleep_enable_timer_wakeup(Configuration.get().Ntp.Deepsleeptime * uS_TO_S_FACTOR);
+        MessageOutput.print(F("SunPositionClass - Going to sleep now for "));
+        MessageOutput.printf("%u s\n", Configuration.get().Ntp.Deepsleeptime);
         delay(1000);
         MessageOutput.flush();
         esp_deep_sleep_start();
@@ -65,6 +65,11 @@ bool SunPositionClass::isDayPeriod() const
 bool SunPositionClass::isSunsetAvailable() const
 {
     return _isSunsetAvailable;
+}
+
+bool SunPositionClass::isValidInfo() const
+{
+    return _isValidInfo;
 }
 
 void SunPositionClass::setDoRecalc(const bool doRecalc)
@@ -141,7 +146,6 @@ void SunPositionClass::updateSunData()
     _sunriseMinutes = static_cast<int>(sunriseRaw);
     _sunsetMinutes = static_cast<int>(sunsetRaw);
 
-    _isDayPeriod = (minutesPastMidnight >= _sunriseMinutes) && (minutesPastMidnight < _sunsetMinutes);
     _isSunsetAvailable = true;
     _isValidInfo = true;
 }

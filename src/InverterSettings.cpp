@@ -96,13 +96,12 @@ void InverterSettingsClass::init(Scheduler& scheduler)
     scheduler.addTask(_settingsTask);
     _settingsTask.setCallback(std::bind(&InverterSettingsClass::settingsLoop, this));
     _settingsTask.setIterations(TASK_FOREVER);
-    _settingsTask.setInterval(SUNPOS_UPDATE_INTERVAL);
+    _settingsTask.setInterval(INVERTER_UPDATE_SETTINGS_INTERVAL);
     _settingsTask.enable();
 }
 
 void InverterSettingsClass::settingsLoop()
 {
-        _lastUpdate = millis();
     const CONFIG_T& config = Configuration.get();
 
     for (uint8_t i = 0; i < INV_MAX_COUNT; i++) {

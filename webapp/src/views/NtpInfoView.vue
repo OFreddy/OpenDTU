@@ -38,12 +38,12 @@
 
                         <tr>
                             <th>{{ $t('ntpinfo.Sunrise') }}</th>
-                            <td v-if="ntpDataList.sun_isValidInfo">{{ ntpDataList.sun_risetime }}</td>
+                            <td v-if="ntpDataList.sun_isSunsetAvailable">{{ ntpDataList.sun_risetime }}</td>
                             <td v-else>{{ $t('ntpinfo.NotAvailable') }}</td>
                         </tr>
                         <tr>
                             <th>{{ $t('ntpinfo.Sunset') }}</th>
-                            <td v-if="ntpDataList.sun_isValidInfo">{{ ntpDataList.sun_settime }}</td>
+                            <td v-if="ntpDataList.sun_isSunsetAvailable">{{ ntpDataList.sun_settime }}</td>
                             <td v-else>{{ $t('ntpinfo.NotAvailable') }}</td>
                         </tr>
                         <tr>

@@ -7,6 +7,6 @@ export interface NtpStatus {
     sun_risetime: string;
     sun_settime: string;
     sun_isDayPeriod: boolean;    
-    sun_isValidInfo: boolean;
+    sun_isSunsetAvailable: boolean;
     deepsleep: boolean;
 }

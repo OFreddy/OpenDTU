@@ -66,9 +66,8 @@ void WebApiNtpClass::onNtpStatus(AsyncWebServerRequest* request)
     }
     root["sun_settime"] = timeStringBuff;
 
-    root["sun_isValidInfo"] = SunPosition.isValidInfo();
+    root["sun_isSunsetAvailable"] = SunPosition.isSunsetAvailable();
     root["sun_isDayPeriod"] = SunPosition.isDayPeriod();
-    root["deepsleep"] = config.Sunset_Deepsleep;
 
     response->setLength();
     request->send(response);
@@ -172,27 +171,6 @@ void WebApiNtpClass::onNtpAdminPost(AsyncWebServerRequest* request)
         retMsg["message"] = "Timezone description must between 1 and " STR(NTP_MAX_TIMEZONEDESCR_STRLEN) " characters long!";
         retMsg["code"] = WebApiError::NtpTimezoneDescriptionLength;
         retMsg["param"]["max"] = NTP_MAX_TIMEZONEDESCR_STRLEN;
-        response->setLength();
-        request->send(response);
-        return;
-    }
-
-    if (root["deepsleeptime"].as<int16_t>() < 5 || root["deepsleeptime"].as<int16_t>() > 300) {
-        retMsg["message"] = "Deepsleep time must be a number between 5 and 300 seconds!";
-        response->setLength();
-        request->send(response);
-        return;
-    }
-
-    if (root["latitude"].as<double>() < -90.0 || root["latitude"].as<double>() > +90.0) {
-        retMsg["message"] = "Latitude must be a number between -90.0 and 90.0!";
-        response->setLength();
-        request->send(response);
-        return;
-    }
-
-    if (root["longitude"].as<double>() < -180.0 || root["longitude"].as<double>() > +180.0) {
-        retMsg["message"] = "Longitude must be a number between -180.0 and 180.0!";
         response->setLength();
         request->send(response);
         return;

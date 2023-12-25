@@ -52,28 +52,30 @@
                     </div>
                 </div>
             </CardElement>
-                <div class="row mb-3">
-                    <label class="col-sm-2 form-check-label" for="inputDeepsleep">{{ $t('ntpadmin.EnableDeepsleep') }}</label>
-                    <div class="col-sm-10">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="inputDeepsleep"
-                                v-model="ntpConfigList.deepsleep" />
-                        </div>
-                    </div>
-                </div>
+            <CardElement :text="$t('ntpadmin.Deepsleep')" textVariant="text-bg-primary" add-space>
+	            <div class="row mb-3">
+	                <label class="col-sm-2 form-check-label" for="inputDeepsleep">{{ $t('ntpadmin.EnableDeepsleep') }}</label>
+	                <div class="col-sm-10">
+	                    <div class="form-check form-switch">
+	                        <input class="form-check-input" type="checkbox" id="inputDeepsleep"
+	                            v-model="ntpConfigList.deepsleep" />
+	                    </div>
+	                </div>
+	            </div>
 
-                <div class="row mb-3">
-                    <label for="inputDeepsleeptime" class="col-sm-2 col-form-label">{{ $t('ntpadmin.DeepsleepTime') }}</label>
-                    <div class="col-sm-10">
-                        <div class="input-group">
-                            <input type="number" class="form-control" id="inputDeepsleeptime" min="0" max="300"
-                                placeholder="Deepsleep duration in seconds"
-                                v-model="ntpConfigList.deepsleeptime"
-                                aria-describedby="deepsleeptimeDescription" />
-                            <span class="input-group-text" id="deepsleeptimeDescription">{{ $t('ntpadmin.Seconds') }}</span>
-                        </div>
-                    </div>
-                </div>
+	            <div class="row mb-3">
+	                <label for="inputDeepsleeptime" class="col-sm-2 col-form-label">{{ $t('ntpadmin.DeepsleepTime') }}</label>
+	                <div class="col-sm-10">
+	                    <div class="input-group">
+	                        <input type="number" class="form-control" id="inputDeepsleeptime" min="0" max="300"
+	                            placeholder="Deepsleep duration in seconds"
+	                            v-model="ntpConfigList.deepsleeptime"
+	                            aria-describedby="deepsleeptimeDescription" />
+	                        <span class="input-group-text" id="deepsleeptimeDescription">{{ $t('ntpadmin.Seconds') }}</span>
+	                    </div>
+	                </div>
+	            </div>
+            </CardElement>
 
             <FormFooter @reload="getNtpConfig"/>
         </form>

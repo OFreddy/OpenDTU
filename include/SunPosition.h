@@ -15,6 +15,7 @@ public:
 
     bool isDayPeriod() const;
     bool isSunsetAvailable() const;
+    bool isValidInfo() const;
     bool sunsetTime(struct tm* info) const;
     bool sunriseTime(struct tm* info) const;
     void setDoRecalc(const bool doRecalc);
