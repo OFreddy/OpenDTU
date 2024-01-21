@@ -91,7 +91,7 @@ void WebApiWsLiveClass::loop()
     }
 }
 
-void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
+void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root, bool brief)
 {
     JsonArray invArray = root.createNestedArray("inverters");
 
@@ -108,30 +108,38 @@ void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
             continue;
         }
 
-        invObject["serial"] = inv->serialString();
+        if (!brief)
+            invObject["serial"] = inv->serialString();
         invObject["name"] = inv->name();
-        invObject["order"] = inv_cfg->Order;
+        if (!brief)
+            invObject["order"] = inv_cfg->Order;
         invObject["data_age"] = (millis() - inv->Statistics()->getLastUpdate()) / 1000;
-        invObject["poll_enabled"] = inv->getEnablePolling();
-        invObject["reachable"] = inv->isReachable();
-        invObject["producing"] = inv->isProducing();
-        invObject["limit_relative"] = inv->SystemConfigPara()->getLimitPercent();
-        if (inv->DevInfo()->getMaxPower() > 0) {
-            invObject["limit_absolute"] = inv->SystemConfigPara()->getLimitPercent() * inv->DevInfo()->getMaxPower() / 100.0;
-        } else {
-            invObject["limit_absolute"] = -1;
+        if (!brief)
+        {
+            invObject["poll_enabled"] = inv->getEnablePolling();
+            invObject["reachable"] = inv->isReachable();
+            invObject["producing"] = inv->isProducing();
+            if (inv->DevInfo()->getMaxPower() > 0) {
+                invObject["limit_absolute"] = inv->SystemConfigPara()->getLimitPercent() * inv->DevInfo()->getMaxPower() / 100.0;
+            } else {
+                invObject["limit_absolute"] = -1;
+            }
         }
-
+        invObject["limit_relative"] = inv->SystemConfigPara()->getLimitPercent();
         // Loop all channels
         for (auto& t : inv->Statistics()->getChannelTypes()) {
+            if(brief && t != TYPE_AC)
+                continue;
             JsonObject chanTypeObj = invObject.createNestedObject(inv->Statistics()->getChannelTypeName(t));
             for (auto& c : inv->Statistics()->getChannelsByType(t)) {
                 if (t == TYPE_DC) {
                     chanTypeObj[String(static_cast<uint8_t>(c))]["name"]["u"] = inv_cfg->channel[c].Name;
                 }
-                addField(chanTypeObj, i, inv, t, c, FLD_PAC);
-                addField(chanTypeObj, i, inv, t, c, FLD_UAC);
-                addField(chanTypeObj, i, inv, t, c, FLD_IAC);
+                addField(chanTypeObj, i, inv, t, c, FLD_PAC, "", brief);
+                addField(chanTypeObj, i, inv, t, c, FLD_UAC, "", brief);
+                addField(chanTypeObj, i, inv, t, c, FLD_IAC, "", brief);
+                if (brief)
+                    continue;
                 if (t == TYPE_AC) {
                     addField(chanTypeObj, i, inv, t, c, FLD_PDC, "Power DC");
                 } else {
@@ -153,10 +161,13 @@ void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
             }
         }
 
-        if (inv->Statistics()->hasChannelFieldValue(TYPE_INV, CH0, FLD_EVT_LOG)) {
-            invObject["events"] = inv->EventLog()->getEntryCount();
-        } else {
-            invObject["events"] = -1;
+        if (!brief)
+        {
+            if (inv->Statistics()->hasChannelFieldValue(TYPE_INV, CH0, FLD_EVT_LOG)) {
+                invObject["events"] = inv->EventLog()->getEntryCount();
+            } else {
+                invObject["events"] = -1;
+            }
         }
 
         if (inv->Statistics()->getLastUpdate() > _newestInverterTimestamp) {
@@ -165,22 +176,34 @@ void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
     }
 
     JsonObject totalObj = root.createNestedObject("total");
-    addTotalField(totalObj, "Power", Datastore.getTotalAcPowerEnabled(), "W", Datastore.getTotalAcPowerDigits());
-    addTotalField(totalObj, "YieldDay", Datastore.getTotalAcYieldDayEnabled(), "Wh", Datastore.getTotalAcYieldDayDigits());
-    addTotalField(totalObj, "YieldTotal", Datastore.getTotalAcYieldTotalEnabled(), "kWh", Datastore.getTotalAcYieldTotalDigits());
+    if (!brief)
+    {
+        addTotalField(totalObj, "Power", Datastore.getTotalAcPowerEnabled(), "W", Datastore.getTotalAcPowerDigits());
+        addTotalField(totalObj, "YieldDay", Datastore.getTotalAcYieldDayEnabled(), "Wh", Datastore.getTotalAcYieldDayDigits());
+        addTotalField(totalObj, "YieldTotal", Datastore.getTotalAcYieldTotalEnabled(), "kWh", Datastore.getTotalAcYieldTotalDigits());
+    }
+    else
+    {
+        totalObj["Power"] = Datastore.getTotalAcPowerEnabled();
+        totalObj["YieldDay"] = Datastore.getTotalAcYieldDayEnabled();
+        totalObj["YieldTotal"] = Datastore.getTotalAcYieldTotalEnabled();
+    }
 
-    JsonObject hintObj = root.createNestedObject("hints");
-    struct tm timeinfo;
-    hintObj["time_sync"] = !getLocalTime(&timeinfo, 5);
-    hintObj["radio_problem"] = (Hoymiles.getRadioNrf()->isInitialized() && (!Hoymiles.getRadioNrf()->isConnected() || !Hoymiles.getRadioNrf()->isPVariant())) || (Hoymiles.getRadioCmt()->isInitialized() && (!Hoymiles.getRadioCmt()->isConnected()));
-    if (!strcmp(Configuration.get().Security.Password, ACCESS_POINT_PASSWORD)) {
-        hintObj["default_password"] = true;
-    } else {
-        hintObj["default_password"] = false;
+    if (!brief)
+    {
+        JsonObject hintObj = root.createNestedObject("hints");
+        struct tm timeinfo;
+        hintObj["time_sync"] = !getLocalTime(&timeinfo, 5);
+        hintObj["radio_problem"] = (Hoymiles.getRadioNrf()->isInitialized() && (!Hoymiles.getRadioNrf()->isConnected() || !Hoymiles.getRadioNrf()->isPVariant())) || (Hoymiles.getRadioCmt()->isInitialized() && (!Hoymiles.getRadioCmt()->isConnected()));
+        if (!strcmp(Configuration.get().Security.Password, ACCESS_POINT_PASSWORD)) {
+            hintObj["default_password"] = true;
+        } else {
+            hintObj["default_password"] = false;
+        }
     }
 }
 
-void WebApiWsLiveClass::addField(JsonObject& root, uint8_t idx, std::shared_ptr<InverterAbstract> inv, const ChannelType_t type, const ChannelNum_t channel, const FieldId_t fieldId, String topic)
+void WebApiWsLiveClass::addField(JsonObject& root, uint8_t idx, std::shared_ptr<InverterAbstract> inv, const ChannelType_t type, const ChannelNum_t channel, const FieldId_t fieldId, String topic, bool brief)
 {
     if (inv->Statistics()->hasChannelFieldValue(type, channel, fieldId)) {
         String chanName;
@@ -191,9 +214,16 @@ void WebApiWsLiveClass::addField(JsonObject& root, uint8_t idx, std::shared_ptr<
         }
         String chanNum;
         chanNum = channel;
-        root[chanNum][chanName]["v"] = inv->Statistics()->getChannelFieldValue(type, channel, fieldId);
-        root[chanNum][chanName]["u"] = inv->Statistics()->getChannelFieldUnit(type, channel, fieldId);
-        root[chanNum][chanName]["d"] = inv->Statistics()->getChannelFieldDigits(type, channel, fieldId);
+        if (!brief)
+        {
+            root[chanNum][chanName]["v"] = inv->Statistics()->getChannelFieldValue(type, channel, fieldId);
+            root[chanNum][chanName]["u"] = inv->Statistics()->getChannelFieldUnit(type, channel, fieldId);
+            root[chanNum][chanName]["d"] = inv->Statistics()->getChannelFieldDigits(type, channel, fieldId);
+        }
+        else
+        {
+            root[chanNum][chanName] = inv->Statistics()->getChannelFieldValue(type, channel, fieldId);
+        }
     }
 }
 
@@ -221,10 +251,25 @@ void WebApiWsLiveClass::onLivedataStatus(AsyncWebServerRequest* request)
 
     try {
         std::lock_guard<std::mutex> lock(_mutex);
+        bool brief = false;
+
+        int paramsCnt = request->params();
+        if (paramsCnt > 0)
+        {
+            for(int i=0;i<paramsCnt;i++)
+            {
+                AsyncWebParameter* p = request->getParam(i);
+                String parName = p->name();
+                parName.toLowerCase();
+                if (parName.equals(String("brief")))
+                    brief = true;
+            }
+        }
+
         AsyncJsonResponse* response = new AsyncJsonResponse(false, 4096 * INV_MAX_COUNT);
         auto& root = response->getRoot();
 
-        generateJsonResponse(root);
+        generateJsonResponse(root, brief);
 
         response->setLength();
         request->send(response);
@@ -237,3 +282,4 @@ void WebApiWsLiveClass::onLivedataStatus(AsyncWebServerRequest* request)
         WebApi.sendTooManyRequests(request);
     }
 }
+
