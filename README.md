@@ -42,16 +42,6 @@ Since the OpenDTU works with several inverters in my case, I didn't want some of
 
 I have added a settings option to control the calculation.
 
-### Extended Web API status URL by a brief parameter
-
-Since the 16kByte output of the default status command from my 5 Hoymiles inverters blasted the stack of my display implementation ([wifi-tft-rf24L01](https://github.com/OFreddy/wifi-tft-rf24L01)) a brief output was required.
-
-The brief output can be accessed by appending a parameter *brief* to the status URL:
-
-`http://<ip-addr>/api/livedata/status?brief`
-
-It only contains values necessary for the display and the returned payload is less than one kilobyte.
-
 [![OpenDTU Build](https://github.com/tbnobody/OpenDTU/actions/workflows/build.yml/badge.svg)](https://github.com/tbnobody/OpenDTU/actions/workflows/build.yml)
 [![cpplint](https://github.com/tbnobody/OpenDTU/actions/workflows/cpplint.yml/badge.svg)](https://github.com/tbnobody/OpenDTU/actions/workflows/cpplint.yml)
 [![Yarn Linting](https://github.com/tbnobody/OpenDTU/actions/workflows/yarnlint.yml/badge.svg)](https://github.com/tbnobody/OpenDTU/actions/workflows/yarnlint.yml)

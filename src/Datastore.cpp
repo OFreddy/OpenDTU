@@ -99,7 +99,7 @@ void DatastoreClass::loop()
         }
 
         for (auto& c : inv->Statistics()->getChannelsByType(TYPE_DC)) {
-            if (inv->getEnablePolling()) {
+            if (inv->getEnablePolling() && cfg->AddToTotal) {
                 _totalDcPowerEnabled += inv->Statistics()->getChannelFieldValue(TYPE_DC, c, FLD_PDC);
                 _totalDcPowerDigits = max<unsigned int>(_totalDcPowerDigits, inv->Statistics()->getChannelFieldDigits(TYPE_DC, c, FLD_PDC));
 
