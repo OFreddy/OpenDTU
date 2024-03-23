@@ -20,8 +20,20 @@ def get_firmware_specifier_build_flag():
         build_version = porcelain.describe('.')  # '.' refers to the repository root dir
     except:
         build_version = "g0000000"
+
+    print ("###########################################")
+    print ("Firmware Revision retuned from git: " + build_version)
+
+    # filter out release tag from build info git describe --tags
+    gitindex = build_version.find("-g")
+    if gitindex >= 0:
+      print ("contains build info at index %i" % gitindex)
+      build_version = build_version[gitindex+1:]
+      print ("filtered git hash: " + build_version)
+
+    print ("###########################################")
+
     build_flag = "-D AUTO_GIT_HASH=\\\"" + build_version + "\\\""
-    print ("Firmware Revision: " + build_version)
     return (build_flag)
 
 env.Append(
