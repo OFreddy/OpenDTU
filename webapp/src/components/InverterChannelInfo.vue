@@ -1,8 +1,11 @@
 <template>
-    <div class="card" :class="{
-        'border-info': channelType == 'AC',
-        'border-secondary': channelType == 'INV'
-    }" style="overflow: hidden">
+    <div
+        class="card card-table"
+        :class="{
+            'border-info': channelType == 'AC',
+            'border-secondary': channelType == 'INV',
+        }"
+    >
         <div v-if="channelType == 'INV'" class="card-header text-bg-secondary">
             {{ $t('inverterchannelinfo.General') }}
         </div>
@@ -17,16 +20,17 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-striped table-hover" style="margin: 0">
+            <table class="table table-striped table-hover">
                 <tbody>
                     <tr v-for="(property, key) in channelData" :key="`prop-${key}`">
                         <template v-if="key != 'name' && property">
                             <th scope="row">{{ $t('inverterchannelproperty.' + key) }}</th>
-                            <td style="text-align: right; padding-right: 0;">
-                                {{ $n(property.v, 'decimal', {
-                                    minimumFractionDigits: property.d,
-                                    maximumFractionDigits: property.d
-                                })
+                            <td class="value">
+                                {{
+                                    $n(property.v, 'decimal', {
+                                        minimumFractionDigits: property.d,
+                                        maximumFractionDigits: property.d,
+                                    })
                                 }}
                             </td>
                             <td>{{ property.u }}</td>

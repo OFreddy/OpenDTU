@@ -1,11 +1,11 @@
-import type { Device } from "./PinMapping";
+import type { Device } from './PinMapping';
 
 export interface Display {
     rotation: number;
     power_safe: boolean;
     screensaver: boolean;
     contrast: number;
-    language: number;
+    locale: string;
     diagramduration: number;
     diagrammode: number;
 }
