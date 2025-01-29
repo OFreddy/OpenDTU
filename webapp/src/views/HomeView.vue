@@ -49,8 +49,13 @@
                                 <span v-else class="badge text-bg-light">-</span>
                             </div>
                             <div class="ms-auto me-auto">
-                                {{ inverter.name + " - " + inverter.AC[0].Power?.v.toFixed(inverter.AC[0].Power?.d) + "
-                                " + inverter.AC[0].Power?.u }}
+                                {{
+                                    inverter.name +
+                                    ' - ' +
+                                    inverter.AC[0].Power?.v.toFixed(inverter.AC[0].Power?.d) +
+                                    ' ' +
+                                    inverter.AC[0].Power?.u
+                                }}
                             </div>
                         </div>
                     </button>
