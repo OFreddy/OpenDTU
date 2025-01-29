@@ -390,8 +390,8 @@ export default defineComponent({
         return {
             modal: {} as bootstrap.Modal,
             modalDelete: {} as bootstrap.Modal,
-            newInverterData: {} as Inverter,
-            selectedInverterData: {} as Inverter,
+            newInverterData: { serial: '' } as Inverter,
+            selectedInverterData: { serial: '' } as Inverter,
             inverters: [] as Inverter[],
             dataLoading: true,
             alert: {} as AlertResponse,
@@ -447,7 +447,7 @@ export default defineComponent({
         },
         onSubmit() {
             this.callInverterApiEndpoint('add', JSON.stringify(this.newInverterData));
-            this.newInverterData = {} as Inverter;
+            this.newInverterData = { serial: '' } as Inverter;
         },
         onDelete() {
             this.callInverterApiEndpoint('del', JSON.stringify({ id: this.selectedInverterData.id }));
