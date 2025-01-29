@@ -1,88 +1,54 @@
 <template>
-    <BasePage
-        :title="$t('home.LiveData')"
-        :isLoading="dataLoading"
-        :isWideScreen="true"
-        :showWebSocket="true"
-        :isWebsocketConnected="isWebsocketConnected"
-        @reload="reloadData"
-    >
+    <BasePage :title="$t('home.LiveData')" :isLoading="dataLoading" :isWideScreen="true" :showWebSocket="true"
+        :isWebsocketConnected="isWebsocketConnected" @reload="reloadData">
         <HintView :hints="liveData.hints" />
         <InverterTotalInfo :totalData="liveData.total" /><br />
         <div class="row gy-3">
             <div class="col-sm-3 col-md-2" :style="[inverterData.length == 1 ? { display: 'none' } : {}]">
-                <div
-                    class="nav nav-pills row-cols-sm-1 gap-3"
-                    id="v-pills-tab"
-                    role="tablist"
-                    aria-orientation="vertical"
-                >
-                    <button
-                        v-for="inverter in inverterData"
-                        :key="inverter.serial"
-                        class="nav-link border border-primary text-break"
-                        :id="'v-pills-' + inverter.serial + '-tab'"
-                        data-bs-toggle="pill"
-                        :data-bs-target="'#v-pills-' + inverter.serial"
-                        type="button"
-                        role="tab"
-                        aria-controls="'v-pills-' + inverter.serial"
-                        aria-selected="true"
-                    >
+                <div class="nav nav-pills row-cols-sm-1 gap-3" id="v-pills-tab" role="tablist"
+                    aria-orientation="vertical">
+                    <button v-for="inverter in inverterData" :key="inverter.serial"
+                        class="nav-link border border-primary text-break" :id="'v-pills-' + inverter.serial + '-tab'"
+                        data-bs-toggle="pill" :data-bs-target="'#v-pills-' + inverter.serial" type="button" role="tab"
+                        aria-controls="'v-pills-' + inverter.serial" aria-selected="true">
                         <div class="d-flex align-items-center">
                             <div class="me-2">
-                                <span
-                                    v-if="inverter.AC"
-                                    class="badge"
-                                    :class="{
-                                        'text-bg-secondary': !inverter.poll_enabled,
-                                        'text-bg-danger': inverter.poll_enabled && !inverter.reachable,
-                                        'text-bg-warning':
-                                            inverter.poll_enabled && inverter.reachable && !inverter.producing,
-                                        'text-bg-success':
-                                            inverter.poll_enabled && inverter.reachable && inverter.producing,
-                                    }"
-                                >
+                                <span v-if="inverter.AC" class="badge" :class="{
+                                    'text-bg-secondary': !inverter.poll_enabled,
+                                    'text-bg-danger': inverter.poll_enabled && !inverter.reachable,
+                                    'text-bg-warning':
+                                        inverter.poll_enabled && inverter.reachable && !inverter.producing,
+                                    'text-bg-success':
+                                        inverter.poll_enabled && inverter.reachable && inverter.producing,
+                                }">
                                     {{ $n(inverter.AC[0]?.Power?.v || 0, 'decimalNoDigits') }}
                                     {{ inverter.AC[0].Power?.u }}
                                 </span>
                                 <span v-else class="badge text-bg-light">-</span>
                             </div>
                             <div class="ms-auto me-auto">
-                                {{ inverter.name + " - " + inverter.AC[0].Power?.v.toFixed(inverter.AC[0].Power?.d) + " " + inverter.AC[0].Power?.u }}
+                                {{ inverter.name + " - " + inverter.AC[0].Power?.v.toFixed(inverter.AC[0].Power?.d) + "
+                                " + inverter.AC[0].Power?.u }}
                             </div>
                         </div>
                     </button>
                 </div>
             </div>
 
-            <div
-                class="tab-content"
-                id="v-pills-tabContent"
-                :class="{
-                    'col-sm-9 col-md-10': inverterData.length > 1,
-                    'col-sm-12 col-md-12': inverterData.length == 1,
-                }"
-            >
-                <div
-                    v-for="inverter in inverterData"
-                    :key="inverter.serial"
-                    class="tab-pane fade show"
-                    :id="'v-pills-' + inverter.serial"
-                    role="tabpanel"
-                    :aria-labelledby="'v-pills-' + inverter.serial + '-tab'"
-                    tabindex="0"
-                >
+            <div class="tab-content" id="v-pills-tabContent" :class="{
+                'col-sm-9 col-md-10': inverterData.length > 1,
+                'col-sm-12 col-md-12': inverterData.length == 1,
+            }">
+                <div v-for="inverter in inverterData" :key="inverter.serial" class="tab-pane fade show"
+                    :id="'v-pills-' + inverter.serial" role="tabpanel"
+                    :aria-labelledby="'v-pills-' + inverter.serial + '-tab'" tabindex="0">
                     <div class="card">
-                        <div
-                            class="card-header d-flex justify-content-between align-items-center"
-                            :class="{
-                                'text-bg-tertiary': !inverter.poll_enabled,
-                                'text-bg-danger': inverter.poll_enabled && !inverter.reachable,
-                                'text-bg-warning': inverter.poll_enabled && inverter.reachable && !inverter.producing,
-                                'text-bg-success': inverter.poll_enabled && inverter.reachable && inverter.producing,
-                            }"
-                        >
+                        <div class="card-header d-flex justify-content-between align-items-center" :class="{
+                            'text-bg-tertiary': !inverter.poll_enabled,
+                            'text-bg-danger': inverter.poll_enabled && !inverter.reachable,
+                            'text-bg-warning': inverter.poll_enabled && inverter.reachable && !inverter.producing,
+                            'text-bg-success': inverter.poll_enabled && inverter.reachable && inverter.producing,
+                        }">
                             <div class="p-1 flex-grow-1">
                                 <div class="d-flex flex-wrap">
                                     <div style="padding-right: 2em">
@@ -94,8 +60,8 @@
                                     <div style="padding-right: 2em">
                                         {{ $t('home.CurrentLimit')
                                         }}<template v-if="inverter.limit_absolute > -1">
-                                            {{ $n(inverter.limit_absolute, 'decimalNoDigits') }} W | </template
-                                        >{{ $n(inverter.limit_relative / 100, 'percentOneDigit') }}
+                                            {{ $n(inverter.limit_absolute, 'decimalNoDigits') }} W | </template>{{
+                                                $n(inverter.limit_relative / 100, 'percentOneDigit') }}
                                     </div>
                                     <div style="padding-right: 2em">
                                         {{ $t('home.DataAge') }}
@@ -108,68 +74,45 @@
                             </div>
                             <div class="btn-toolbar p-2" role="toolbar">
                                 <div class="btn-group me-2" role="group">
-                                    <button
-                                        :disabled="!isLogged"
-                                        type="button"
-                                        class="btn btn-sm btn-danger"
-                                        @click="onShowLimitSettings(inverter.serial)"
-                                        v-tooltip
-                                        :title="$t('home.ShowSetInverterLimit')"
-                                    >
+                                    <button :disabled="!isLogged" type="button" class="btn btn-sm btn-danger"
+                                        @click="onShowLimitSettings(inverter.serial)" v-tooltip
+                                        :title="$t('home.ShowSetInverterLimit')">
                                         <BIconSpeedometer style="font-size: 24px" />
                                     </button>
                                 </div>
 
                                 <div class="btn-group me-2" role="group">
-                                    <button
-                                        :disabled="!isLogged"
-                                        type="button"
-                                        class="btn btn-sm btn-danger"
-                                        @click="onShowPowerSettings(inverter.serial)"
-                                        v-tooltip
-                                        :title="$t('home.TurnOnOff')"
-                                    >
+                                    <button :disabled="!isLogged" type="button" class="btn btn-sm btn-danger"
+                                        @click="onShowPowerSettings(inverter.serial)" v-tooltip
+                                        :title="$t('home.TurnOnOff')">
                                         <BIconPower style="font-size: 24px" />
                                     </button>
                                 </div>
 
                                 <div class="btn-group me-2" role="group">
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-info"
-                                        @click="onShowDevInfo(inverter.serial)"
-                                        v-tooltip
-                                        :title="$t('home.ShowInverterInfo')"
-                                    >
+                                    <button type="button" class="btn btn-sm btn-info"
+                                        @click="onShowDevInfo(inverter.serial)" v-tooltip
+                                        :title="$t('home.ShowInverterInfo')">
                                         <BIconCpu style="font-size: 24px" />
                                     </button>
                                 </div>
 
                                 <div class="btn-group me-2" role="group">
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-info"
-                                        @click="onShowGridProfile(inverter.serial)"
-                                        v-tooltip
-                                        :title="$t('home.ShowGridProfile')"
-                                    >
+                                    <button type="button" class="btn btn-sm btn-info"
+                                        @click="onShowGridProfile(inverter.serial)" v-tooltip
+                                        :title="$t('home.ShowGridProfile')">
                                         <BIconOutlet style="font-size: 24px" />
                                     </button>
                                 </div>
 
                                 <div class="btn-group" role="group">
-                                    <button
-                                        v-if="inverter.events >= 0"
-                                        type="button"
+                                    <button v-if="inverter.events >= 0" type="button"
                                         class="btn btn-sm btn-secondary position-relative"
-                                        @click="onShowEventlog(inverter.serial)"
-                                        v-tooltip
-                                        :title="$t('home.ShowEventlog')"
-                                    >
+                                        @click="onShowEventlog(inverter.serial)" v-tooltip
+                                        :title="$t('home.ShowEventlog')">
                                         <BIconJournalText style="font-size: 24px" />
                                         <span
-                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger"
-                                        >
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger">
                                             {{ inverter.events }}
                                             <span class="visually-hidden">{{ $t('home.UnreadMessages') }}</span>
                                         </span>
@@ -179,37 +122,27 @@
                         </div>
                         <div class="card-body">
                             <div class="row flex-row-reverse flex-wrap-reverse g-3">
-                                <template
-                                    v-for="chanType in [
-                                        { obj: inverter.INV, name: 'INV' },
-                                        { obj: inverter.AC, name: 'AC' },
-                                        { obj: inverter.DC, name: 'DC' },
-                                    ].reverse()"
-                                >
+                                <template v-for="chanType in [
+                                    { obj: inverter.INV, name: 'INV' },
+                                    { obj: inverter.AC, name: 'AC' },
+                                    { obj: inverter.DC, name: 'DC' },
+                                ].reverse()">
                                     <template v-if="chanType.obj != null">
-                                        <template
-                                            v-for="channel in Object.keys(chanType.obj)
-                                                .sort()
-                                                .reverse()
-                                                .map((x) => +x)"
-                                            :key="channel"
-                                        >
-                                            <template
-                                                v-if="
-                                                    chanType.name != 'DC' ||
-                                                    (chanType.name == 'DC' && getSumIrridiation(inverter) == 0) ||
-                                                    (chanType.name == 'DC' &&
-                                                        getSumIrridiation(inverter) > 0 &&
-                                                        chanType.obj[channel].Irradiation?.max) ||
-                                                    0 > 0
-                                                "
-                                            >
+                                        <template v-for="channel in Object.keys(chanType.obj)
+                                            .sort()
+                                            .reverse()
+                                            .map((x) => +x)" :key="channel">
+                                            <template v-if="
+                                                chanType.name != 'DC' ||
+                                                (chanType.name == 'DC' && getSumIrridiation(inverter) == 0) ||
+                                                (chanType.name == 'DC' &&
+                                                    getSumIrridiation(inverter) > 0 &&
+                                                    chanType.obj[channel].Irradiation?.max) ||
+                                                0 > 0
+                                            ">
                                                 <div class="col">
-                                                    <InverterChannelInfo
-                                                        :channelData="chanType.obj[channel]"
-                                                        :channelType="chanType.name"
-                                                        :channelNumber="channel"
-                                                    />
+                                                    <InverterChannelInfo :channelData="chanType.obj[channel]"
+                                                        :channelType="chanType.name" :channelNumber="channel" />
                                                 </div>
                                             </template>
                                         </template>
@@ -229,22 +162,14 @@
                             <div class="accordion mt-5" id="accordionRadioStats">
                                 <div class="accordion-item accordion-table">
                                     <h2 class="accordion-header">
-                                        <button
-                                            class="accordion-button collapsed"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseStats"
-                                            aria-expanded="true"
-                                            aria-controls="collapseStats"
-                                        >
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseStats"
+                                            aria-expanded="true" aria-controls="collapseStats">
                                             <BIconBroadcast />&nbsp;{{ $t('home.RadioStats') }}
                                         </button>
                                     </h2>
-                                    <div
-                                        id="collapseStats"
-                                        class="accordion-collapse collapse"
-                                        data-bs-parent="#accordionRadioStats"
-                                    >
+                                    <div id="collapseStats" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionRadioStats">
                                         <div class="accordion-body">
                                             <table class="table table-striped table-hover">
                                                 <tbody>
@@ -319,20 +244,15 @@
                                                 </tbody>
                                             </table>
                                             <div class="d-flex">
-                                                <button
-                                                    :disabled="!isLogged || performRadioStatsReset"
-                                                    type="button"
+                                                <button :disabled="!isLogged || performRadioStatsReset" type="button"
                                                     class="btn btn-danger ms-auto me-3 mt-3"
-                                                    @click="onResetRadioStats(inverter.serial)"
-                                                >
+                                                    @click="onResetRadioStats(inverter.serial)">
                                                     <template v-if="!performRadioStatsReset">
                                                         <BIconArrowCounterclockwise />&nbsp;{{ $t('home.StatsReset') }}
                                                     </template>
                                                     <template v-else>
-                                                        <span
-                                                            class="spinner-border spinner-border-sm"
-                                                            aria-hidden="true"
-                                                        ></span>
+                                                        <span class="spinner-border spinner-border-sm"
+                                                            aria-hidden="true"></span>
                                                         <span role="status">&nbsp;{{ $t('home.StatsResetting') }}</span>
                                                     </template>
                                                 </button>
@@ -369,28 +289,16 @@
             <label for="inputCurrentLimit" class="col-sm-3 col-form-label">{{ $t('home.CurrentLimit') }} </label>
             <div class="col-sm-4">
                 <div class="input-group">
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="inputCurrentLimit"
-                        aria-describedby="currentLimitType"
-                        v-model="currentLimitRelative"
-                        disabled
-                    />
+                    <input type="text" class="form-control" id="inputCurrentLimit" aria-describedby="currentLimitType"
+                        v-model="currentLimitRelative" disabled />
                     <span class="input-group-text" id="currentLimitType">%</span>
                 </div>
             </div>
 
             <div class="col-sm-4" v-if="currentLimitList.max_power > 0">
                 <div class="input-group">
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="inputCurrentLimitAbsolute"
-                        aria-describedby="currentLimitTypeAbsolute"
-                        v-model="currentLimitAbsolute"
-                        disabled
-                    />
+                    <input type="text" class="form-control" id="inputCurrentLimitAbsolute"
+                        aria-describedby="currentLimitTypeAbsolute" v-model="currentLimitAbsolute" disabled />
                     <span class="input-group-text" id="currentLimitTypeAbsolute">W</span>
                 </div>
             </div>
@@ -401,15 +309,12 @@
                 {{ $t('home.LastLimitSetStatus') }}
             </label>
             <div class="col-sm-9">
-                <span
-                    class="badge"
-                    :class="{
-                        'text-bg-danger': currentLimitList.limit_set_status == 'Failure',
-                        'text-bg-warning': currentLimitList.limit_set_status == 'Pending',
-                        'text-bg-success': currentLimitList.limit_set_status == 'Ok',
-                        'text-bg-secondary': currentLimitList.limit_set_status == 'Unknown',
-                    }"
-                >
+                <span class="badge" :class="{
+                    'text-bg-danger': currentLimitList.limit_set_status == 'Failure',
+                    'text-bg-warning': currentLimitList.limit_set_status == 'Pending',
+                    'text-bg-success': currentLimitList.limit_set_status == 'Ok',
+                    'text-bg-secondary': currentLimitList.limit_set_status == 'Unknown',
+                }">
                     {{ $t('home.' + currentLimitList.limit_set_status) }}
                 </span>
             </div>
@@ -419,21 +324,10 @@
             <label for="inputTargetLimit" class="col-sm-3 col-form-label">{{ $t('home.SetLimit') }}</label>
             <div class="col-sm-9">
                 <div class="input-group">
-                    <input
-                        type="number"
-                        name="inputTargetLimit"
-                        class="form-control"
-                        id="inputTargetLimit"
-                        :min="targetLimitMin"
-                        :max="targetLimitMax"
-                        v-model="targetLimitList.limit_value"
-                    />
-                    <button
-                        class="btn btn-primary dropdown-toggle"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                    >
+                    <input type="number" name="inputTargetLimit" class="form-control" id="inputTargetLimit"
+                        :min="targetLimitMin" :max="targetLimitMax" v-model="targetLimitList.limit_value" />
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         {{ targetLimitTypeText }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -445,12 +339,8 @@
                         </li>
                     </ul>
                 </div>
-                <div
-                    v-if="targetLimitType == 0"
-                    class="alert alert-secondary mt-3"
-                    role="alert"
-                    v-html="$t('home.LimitHint')"
-                ></div>
+                <div v-if="targetLimitType == 0" class="alert alert-secondary mt-3" role="alert"
+                    v-html="$t('home.LimitHint')"></div>
             </div>
         </div>
 
@@ -473,15 +363,12 @@
         <div class="row mb-3 align-items-center">
             <label for="inputLastPowerSet" class="col col-form-label">{{ $t('home.LastPowerSetStatus') }}</label>
             <div class="col">
-                <span
-                    class="badge"
-                    :class="{
-                        'text-bg-danger': successCommandPower == 'Failure',
-                        'text-bg-warning': successCommandPower == 'Pending',
-                        'text-bg-success': successCommandPower == 'Ok',
-                        'text-bg-secondary': successCommandPower == 'Unknown',
-                    }"
-                >
+                <span class="badge" :class="{
+                    'text-bg-danger': successCommandPower == 'Failure',
+                    'text-bg-warning': successCommandPower == 'Pending',
+                    'text-bg-success': successCommandPower == 'Ok',
+                    'text-bg-secondary': successCommandPower == 'Unknown',
+                }">
                     {{ $t('home.' + successCommandPower) }}
                 </span>
             </div>

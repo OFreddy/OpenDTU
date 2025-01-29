@@ -442,7 +442,7 @@
         "LocationConfiguration": "Standortkonfiguration",
         "Longitude": "Längengrad",
         "Latitude": "Breitengrad",
-	    "Deepsleep": "Deepsleep",
+        "Deepsleep": "Deepsleep",
         "EnableDeepsleep": "Deepsleep aktivieren",
         "EnableDeepsleepHint": "Wenn aktiviert wird der ESP32 in der Nacht in den Deep Sleep Modus versetzt um Energie zu sparen.",
         "DeepsleepTime": "Deepsleep Periode:",
