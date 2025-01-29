@@ -189,11 +189,14 @@
                         ></div>
                     </CardElement>
 
-                    <CardElement :text="$t('invertertotalinfo.TotalYieldTotal')" >
-                        <InputElement :label="$t('inverteradmin.AddToTotal')"
-                        v-model="selectedInverterData.total"
-                        type="checkbox" wide
-                        :tooltip="$t('inverteradmin.AddToTotalHint')"/>
+                    <CardElement :text="$t('invertertotalinfo.TotalYieldTotal')">
+                        <InputElement
+                            :label="$t('inverteradmin.AddToTotal')"
+                            v-model="selectedInverterData.total"
+                            type="checkbox"
+                            wide
+                            :tooltip="$t('inverteradmin.AddToTotalHint')"
+                        />
                     </CardElement>
                 </div>
             </div>
