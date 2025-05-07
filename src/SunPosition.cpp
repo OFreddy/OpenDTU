@@ -12,12 +12,7 @@
 
 static RTC_DATA_ATTR int bootCount = 0;
 
-#define uS_TO_S_FACTOR 1000000 /* Conversion factor for micro seconds to seconds */
-
-static RTC_DATA_ATTR int bootCount = 0;
-
 #define CALC_UNIQUE_ID(tm) (((tm.tm_year << 9) | (tm.tm_mon << 5) | tm.tm_mday) << 1 | tm.tm_isdst)
-
 
 SunPositionClass SunPosition;
 
