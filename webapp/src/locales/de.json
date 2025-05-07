@@ -46,6 +46,10 @@
         "Light": "Hell",
         "Auto": "Automatisch"
     },
+    "dataagedisplay": {
+        "DataAge": "Letzte Aktualisierung",
+        "SecondsSince": "vor 0 Sekunden | vor 1 Sekunde | vor {n} Sekunden"
+    },
     "apiresponse": {
         "1001": "Einstellungen gespeichert!",
         "1002": "Keine Werte gefunden!",
@@ -118,9 +122,7 @@
     "home": {
         "LiveData": "Live-Daten",
         "SerialNumber": "Seriennummer: ",
-        "CurrentLimit": "Aktuelles Limit: ",
-        "DataAge": "Letzte Aktualisierung: ",
-        "Seconds": "vor {val} Sekunden",
+        "CurrentLimit": "Aktuelles Limit",
         "ShowSetInverterLimit": "Zeige / Setze Wechselrichterlimit",
         "TurnOnOff": "Schalte Wechselrichter ein oder aus",
         "ShowInverterInfo": "Zeige Wechselrichter-Informationen",
@@ -130,15 +132,15 @@
         "EventLog": "Ereignisanzeige",
         "InverterInfo": "Wechselrichter-Informationen",
         "LimitSettings": "Limit-Einstellungen",
-        "LastLimitSetStatus": "Letzter Übertragungsstatus:",
-        "SetLimit": "Setze Limit:",
+        "LastLimitSetStatus": "Letzter Übertragungsstatus",
+        "SetLimit": "Setze Limit",
         "Relative": "Relativ (%)",
         "Absolute": "Absolut (W)",
         "LimitHint": "<b>Hinweis:</b> Wenn das Limit als Absolutwert eingestellt wird, wird die Anzeige des aktuellen Wertes erst nach ~4 Minuten aktualisiert.",
         "SetPersistent": "Limit dauerhaft setzen",
         "SetNonPersistent": "Limit temporär setzen",
         "PowerSettings": "Energieeinstellungen",
-        "LastPowerSetStatus": "Letzer Übertragungsstatus:",
+        "LastPowerSetStatus": "Letzer Übertragungsstatus",
         "TurnOn": "Einschalten",
         "TurnOff": "Ausschalten",
         "Restart": "Neustarten",

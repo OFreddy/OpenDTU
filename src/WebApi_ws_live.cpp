@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 /*
- * Copyright (C) 2022-2024 Thomas Basler and others
+ * Copyright (C) 2022-2025 Thomas Basler and others
  */
 #include "WebApi_ws_live.h"
 #include "Datastore.h"
@@ -11,7 +11,7 @@
 #include <AsyncJson.h>
 
 #ifndef PIN_MAPPING_REQUIRED
-    #define PIN_MAPPING_REQUIRED 0
+#define PIN_MAPPING_REQUIRED 0
 #endif
 
 WebApiWsLiveClass::WebApiWsLiveClass()
@@ -52,7 +52,9 @@ void WebApiWsLiveClass::reload()
 
     auto const& config = Configuration.get();
 
-    if (config.Security.AllowReadonly) { return; }
+    if (config.Security.AllowReadonly) {
+        return;
+    }
 
     _ws.enable(false);
     _simpleDigestAuth.setPassword(config.Security.Password);
@@ -144,6 +146,7 @@ void WebApiWsLiveClass::generateInverterCommonJsonResponse(JsonObject& root, std
     root["name"] = inv->name();
     root["order"] = inv_cfg->Order;
     root["data_age"] = (millis() - inv->Statistics()->getLastUpdate()) / 1000;
+    root["data_age_ms"] = millis() - inv->Statistics()->getLastUpdate();
     root["poll_enabled"] = inv->getEnablePolling();
     root["reachable"] = inv->isReachable();
     root["producing"] = inv->isProducing();
@@ -234,9 +237,9 @@ void WebApiWsLiveClass::addTotalField(JsonObject& root, const String& name, cons
 void WebApiWsLiveClass::onWebsocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client, AwsEventType type, void* arg, uint8_t* data, size_t len)
 {
     if (type == WS_EVT_CONNECT) {
-        MessageOutput.printf("Websocket: [%s][%u] connect\r\n", server->url(), client->id());
+        MessageOutput.printf("Websocket: [%s][%" PRIu32 "] connect\r\n", server->url(), client->id());
     } else if (type == WS_EVT_DISCONNECT) {
-        MessageOutput.printf("Websocket: [%s][%u] disconnect\r\n", server->url(), client->id());
+        MessageOutput.printf("Websocket: [%s][%" PRIu32 "] disconnect\r\n", server->url(), client->id());
     }
 }
 
