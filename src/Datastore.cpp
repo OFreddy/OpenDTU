@@ -82,7 +82,7 @@ void DatastoreClass::loop()
         }
 
         for (auto& c : inv->Statistics()->getChannelsByType(TYPE_INV)) {
-            if (cfg->Poll_Enable) {
+            if (cfg->Poll_Enable && cfg->AddToTotal) {
                 _totalAcYieldTotalEnabled += inv->Statistics()->getChannelFieldValue(TYPE_INV, c, FLD_YT);
                 _totalAcYieldDayEnabled += inv->Statistics()->getChannelFieldValue(TYPE_INV, c, FLD_YD);
 
@@ -92,14 +92,14 @@ void DatastoreClass::loop()
         }
 
         for (auto& c : inv->Statistics()->getChannelsByType(TYPE_AC)) {
-            if (inv->getEnablePolling()) {
+            if (inv->getEnablePolling() && cfg->AddToTotal) {
                 _totalAcPowerEnabled += inv->Statistics()->getChannelFieldValue(TYPE_AC, c, FLD_PAC);
                 _totalAcPowerDigits = max<unsigned int>(_totalAcPowerDigits, inv->Statistics()->getChannelFieldDigits(TYPE_AC, c, FLD_PAC));
             }
         }
 
         for (auto& c : inv->Statistics()->getChannelsByType(TYPE_DC)) {
-            if (inv->getEnablePolling()) {
+            if (inv->getEnablePolling() && cfg->AddToTotal) {
                 _totalDcPowerEnabled += inv->Statistics()->getChannelFieldValue(TYPE_DC, c, FLD_PDC);
                 _totalDcPowerDigits = max<unsigned int>(_totalDcPowerDigits, inv->Statistics()->getChannelFieldDigits(TYPE_DC, c, FLD_PDC));
 

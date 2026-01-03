@@ -872,6 +872,8 @@
         "PollEnableNight": "Poll inverter data at night",
         "CommandEnable": "Send commands",
         "CommandEnableNight": "Send commands at night",
+        "AddToTotal": "Add power and yield to the total",
+        "AddToTotalHint": "If this option is activated, the power and the yield of this inverter are taken into account in the totals in the live view.",
         "StringName": "Name string {num}:",
         "StringNameHint": "Here you can specify a custom name for the respective port of your inverter.",
         "StringMaxPower": "Max power string {num}:",

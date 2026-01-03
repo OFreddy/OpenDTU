@@ -188,6 +188,16 @@
                             v-html="$t('inverteradmin.StatusHint')"
                         ></div>
                     </CardElement>
+
+                    <CardElement :text="$t('invertertotalinfo.InverterTotalYieldTotal')" addSpace>
+                        <InputElement
+                            :label="$t('inverteradmin.AddToTotal')"
+                            v-model="selectedInverterData.add_to_total"
+                            type="checkbox"
+                            wide
+                            :tooltip="$t('inverteradmin.AddToTotalHint')"
+                        />
+                    </CardElement>
                 </div>
             </div>
 

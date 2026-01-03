@@ -679,6 +679,8 @@
         "PollEnableNight": "Interroger les données de l'onduleur la nuit",
         "CommandEnable": "Envoyer des commandes",
         "CommandEnableNight": "Envoyer des commandes la nuit",
+        "AddToTotal": "Add power and yield to the total",
+        "AddToTotalHint": "If this option is activated, the power and the yield of this inverter are taken into account in the totals in the live view.",
         "StringName": "Nom de la ligne {num}:",
         "StringNameHint": "Ici, vous pouvez spécifier un nom personnalisé pour le port respectif de votre onduleur.",
         "StringMaxPower": "Puissance maximale de la ligne {num}:",

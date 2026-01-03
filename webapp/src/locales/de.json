@@ -871,6 +871,8 @@
         "PollEnableNight": "Daten auch nachts abrufen",
         "CommandEnable": "Befehle senden",
         "CommandEnableNight": "Befehle auch nachts senden",
+        "AddToTotal": "Leistung und Ertrag auf die Gesamtsummen addieren",
+        "AddToTotalHint": "Wenn diese Option aktiviert ist wird die Leistung und der Ertrag dieses Wechelrichters bei den Summen in der Live Ansicht berücksichtigt.",
         "StringName": "Stringname {num}:",
         "StringNameHint": "Hier kann ein eigener Name für den entsprechenden Port des Wechselrichters angegeben werden.",
         "StringMaxPower": "Max. Leistung String {num}:",

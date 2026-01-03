@@ -74,6 +74,7 @@ struct INVERTER_CONFIG_T {
     bool ClearEventlogOnMidnight;
     bool YieldDayCorrection;
     CHANNEL_CONFIG_T channel[INV_MAX_CHAN_COUNT];
+    bool AddToTotal;
 };
 
 struct HTTP_REQUEST_CONFIG_T {
